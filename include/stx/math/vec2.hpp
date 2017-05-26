@@ -2,6 +2,8 @@
 
 #include <cmath>
 
+namespace stx {
+
 /// A 2 dimensional vector. \ingroup LinearMath
 class vec2 {
 public:
@@ -74,3 +76,5 @@ public:
 constexpr inline float dot    (const vec2& a, const vec2& b) { return a.dot(b); }
 constexpr inline float length2(const vec2& v) { return v.length2(); }
 inline float length (const vec2& v) { return v.length(); }
+
+} // namespace stx

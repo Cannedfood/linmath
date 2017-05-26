@@ -6,6 +6,8 @@
 
 #include <initializer_list>
 
+namespace stx {
+
 /// A 4x4 matrix. \ingroup LinearMath
 class mat4 {
 public:
@@ -108,3 +110,5 @@ public:
 		};
 	}
 };
+
+} // namespace stx

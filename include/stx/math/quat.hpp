@@ -4,6 +4,8 @@
 
 #include "vec3.hpp"
 
+namespace stx {
+
 /// A quaternion used for rotation. \ingroup LinearMath
 class quat {
 public:
@@ -91,3 +93,5 @@ public:
 		};
 	}
 };
+
+} // namespace stx

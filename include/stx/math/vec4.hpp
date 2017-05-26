@@ -2,6 +2,8 @@
 
 #include <cmath>
 
+namespace stx {
+
 /// A 4 dimensional vector or rgba color. \ingroup LinearMath
 class vec4 {
 public:
@@ -85,3 +87,5 @@ constexpr inline
 vec4 rgba(unsigned char r, unsigned char g, unsigned char b, double a = 1.0) {
 	return vec4 { r / 255.f, g / 255.f, b/255.f, (float)a };
 }
+
+} // namespace stx

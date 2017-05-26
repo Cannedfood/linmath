@@ -4,6 +4,8 @@
 #include "mat4.hpp"
 #include "quat.hpp"
 
+namespace stx {
+
 /// Converts a quaternion to a 3x3 rotation matrix. @ingroup LinearMath
 /// Adapted from java source: http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToMatrix/
 mat3 rotate(const quat& q) {
@@ -41,3 +43,5 @@ mat3 scale(const vec3& v) {
 		0, 0, v.z
 	};
 }
+
+} // namespace stx

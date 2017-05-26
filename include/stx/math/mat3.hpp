@@ -5,6 +5,8 @@
 #include <initializer_list>
 #include <cstring>
 
+namespace stx {
+
 /// A 3x3 matrix. \ingroup LinearMath
 class mat3 {
 public:
@@ -73,3 +75,5 @@ public:
 		return std::memcmp(data, other.data, sizeof(data)) == 0;
 	}
 };
+
+} // namespace stx

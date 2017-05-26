@@ -3,6 +3,8 @@
 #include <cmath>
 #include <cstddef>
 
+namespace stx {
+
 /// A 3 dimensional vector or rgb color. \ingroup LinearMath
 class vec3 {
 public:
@@ -97,3 +99,5 @@ constexpr
 vec3 rgb(unsigned char r, unsigned char g, unsigned char b) {
 	return vec3{ r / 255.f, g / 255.f, b / 255.f };
 }
+
+} // namespace stx
