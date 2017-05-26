@@ -6,7 +6,7 @@
 
 namespace stx {
 
-/// Converts a quaternion to a 3x3 rotation matrix. @ingroup LinearMath
+/// Converts a quaternion to a 3x3 rotation matrix. @ingroup stxmath
 /// Adapted from java source: http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToMatrix/
 mat3 rotate(const quat& q) {
 	mat3 m;
@@ -35,7 +35,7 @@ mat3 rotate(const quat& q) {
 	m[1][2] = 2.0 * (tmp1 - tmp2);
 }
 
-/// Generates a scaling 3x3 matrix. @ingroup LinearMath
+/// Generates a scaling 3x3 matrix. @ingroup stxmath
 mat3 scale(const vec3& v) {
 	return mat3 {
 		v.x, 0, 0,

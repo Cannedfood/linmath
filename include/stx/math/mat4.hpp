@@ -8,7 +8,7 @@
 
 namespace stx {
 
-/// A 4x4 matrix. @ingroup LinearMath
+/// A 4x4 matrix. @ingroup stxmath
 class mat4 {
 public:
 	union {

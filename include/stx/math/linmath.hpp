@@ -1,4 +1,4 @@
-/// @defgroup LinearMath
+/// @defgroup stxmath
 
 #pragma once
 
