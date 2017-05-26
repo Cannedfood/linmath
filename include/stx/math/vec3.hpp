@@ -5,7 +5,7 @@
 
 namespace stx {
 
-/// A 3 dimensional vector or rgb color. \ingroup LinearMath
+/// A 3 dimensional vector or rgb color. @ingroup LinearMath
 class vec3 {
 public:
 	union {

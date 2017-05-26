@@ -7,7 +7,7 @@
 
 namespace stx {
 
-/// A 3x3 matrix. \ingroup LinearMath
+/// A 3x3 matrix. @ingroup LinearMath
 class mat3 {
 public:
 	union {

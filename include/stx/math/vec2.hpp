@@ -4,7 +4,7 @@
 
 namespace stx {
 
-/// A 2 dimensional vector. \ingroup LinearMath
+/// A 2 dimensional vector. @ingroup LinearMath
 class vec2 {
 public:
 	union {

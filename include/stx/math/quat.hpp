@@ -6,7 +6,7 @@
 
 namespace stx {
 
-/// A quaternion used for rotation. \ingroup LinearMath
+/// A quaternion used for rotation. @ingroup LinearMath
 class quat {
 public:
 	union {

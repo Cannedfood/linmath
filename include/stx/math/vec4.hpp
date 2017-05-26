@@ -4,7 +4,7 @@
 
 namespace stx {
 
-/// A 4 dimensional vector or rgba color. \ingroup LinearMath
+/// A 4 dimensional vector or rgba color. @ingroup LinearMath
 class vec4 {
 public:
 	union {
