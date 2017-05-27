@@ -16,6 +16,7 @@ public:
 			float r, g, b;
 		};
 		float xyz[3];
+		float rgb[3];
 	};
 
 	constexpr inline explicit
