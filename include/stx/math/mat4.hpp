@@ -76,6 +76,32 @@ public:
 	constexpr inline const vec4& operator[](size_t idx) const { return vectors[idx]; }
 	constexpr inline       vec4& operator[](size_t idx)       { return vectors[idx]; }
 
+	mat4 scale(const vec3& scale) const {
+		mat4 copy = *this;
+		for (size_t i = 0; i < 3; i++) {
+			copy[i][i] *= scale[i];
+		}
+		return copy;
+	}
+
+	mat4 translate(const vec3& translation) const {
+		mat4 copy = *this;
+		for (size_t i = 0; i < 3; i++) {
+			copy[3][i] *= translation[i];
+		}
+		return copy;
+	}
+
+	mat4 transpose() const {
+		mat4 copy;
+		for (size_t i = 0; i < 4; i++) {
+			for (size_t j = 0; j < 4; j++) {
+				copy[i][j] = (*this)[j][i];
+			}
+		}
+		return copy;
+	}
+
 	constexpr
 	mat4 operator*(const mat4& other) {
 		mat4 result;
