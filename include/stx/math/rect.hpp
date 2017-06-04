@@ -7,18 +7,8 @@ namespace stx {
 
 /// A axis aligned rectangle defined by maximum and minimum @ingroup stxmath
 struct quad {
-	union {
-		struct {
-			vec2 min;
-			vec2 max;
-		};
-		struct {
-			float minx;
-			float miny;
-			float maxx;
-			float maxy;
-		};
-	};
+	vec2 min;
+	vec2 max;
 
 	constexpr
 	quad() : quad(0, 0, 0, 0) {}
@@ -41,18 +31,8 @@ struct quad {
 
 /// A axis aligned rectangle defined by minumum and size @ingroup stxmath
 struct rect {
-	union {
-		struct {
-			vec2 position;
-			vec2 size;
-		};
-		struct {
-			float x;
-			float y;
-			float width;
-			float height;
-		};
-	};
+	vec2 position;
+	vec2 size;
 
 	constexpr
 	rect() : rect(0, 0, 0, 0) {}
@@ -65,42 +45,13 @@ struct rect {
 
 	constexpr inline
 	vec2 max() const noexcept { return position + size; }
-};
 
-/// A axis aligned cuboid defined by maximum and minimum @ingroup stxmath
-struct box {
-	union {
-		struct {
-			vec3 min;
-			vec3 max;
-		};
-		struct {
-			float minx;
-			float miny;
-			float minz;
-			float maxx;
-			float maxy;
-			float maxz;
-		};
-	};
-};
-
-/// A axis aligned cuboid defined by minumum and size @ingroup stxmath
-struct cuboid {
-	union {
-		struct {
-			vec3 position;
-			vec3 size;
-		};
-		struct {
-			float x;
-			float y;
-			float z;
-			float width;
-			float height;
-			float depth;
-		};
-	};
+	rect clamp(rect const& other) const noexcept {
+		rect r;
+		r.position = other.position.max(position);
+		r.size     = other.max().min(max()) - r.position;
+		return r;
+	}
 };
 
 } // namespace stx

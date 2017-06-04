@@ -70,8 +70,9 @@ public:
 	 constexpr inline float length2()          const { return dot(*this); }
 	 inline float length()           const { return sqrtf(length2()); }
 
-	 constexpr inline vec3 normalize()   const { return *this / length(); }
-	 constexpr inline vec3& make_normal() { *this = normalize(); return *this; }
+	 // constexpr TODO: make these two constexpr as soon as length() is
+	 inline vec3 normalize()   const { return *this / length(); }
+	 inline vec3& make_normal() { *this = normalize(); return *this; }
 
 
 	 constexpr inline vec3 max(const vec3& v) const {
