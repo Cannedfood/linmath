@@ -3,6 +3,7 @@
 #include "vec3.hpp"
 #include "vec4.hpp"
 #include "mat3.hpp"
+#include "quat.hpp"
 
 #include <initializer_list>
 
@@ -102,8 +103,12 @@ public:
 		return copy;
 	}
 
+	mat4 rotate(quat const& q) const {
+		return (*this) * q.to_mat3();
+	}
+
 	constexpr
-	mat4 operator*(const mat4& other) {
+	mat4 operator*(const mat4& other) const {
 		mat4 result;
 		for (size_t i = 0; i < 4; i++) {
 			for (size_t k = 0; k < 4; k++) {
@@ -115,6 +120,11 @@ public:
 			}
 		}
 		return result;
+	}
+
+	constexpr
+	mat4 operator*(const mat3& other) const {
+		return (*this) * mat4(other);
 	}
 
 	constexpr
@@ -136,5 +146,10 @@ public:
 		};
 	}
 };
+
+inline
+mat4 quat::to_mat4() const {
+	return mat4(to_mat3());
+}
 
 } // namespace stx

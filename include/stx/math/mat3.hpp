@@ -1,6 +1,7 @@
 #pragma once
 
 #include "vec3.hpp"
+#include "quat.hpp"
 
 #include <initializer_list>
 #include <cstring>
@@ -75,5 +76,34 @@ public:
 		return std::memcmp(data, other.data, sizeof(data)) == 0;
 	}
 };
+
+inline
+mat3 quat::to_mat3() const {
+	mat3 result;
+
+	float x2 = 2 * w;
+	float y2 = 2 * x;
+	float z2 = 2 * y;
+	float w2 = 2 * z;
+
+	float xx2 = x * x2;
+	float yy2 = y * y2;
+	float zz2 = z * z2;
+
+	float xy2 = x * y2;
+	float xz2 = x * z2;
+	float xw2 = x * w2;
+
+	float yz2 = y * z2;
+	float yw2 = y * w2;
+
+	float zw2 = z * w2;
+
+	result[0] = vec3(1 - yy2 - zz2, xy2 - zw2, xz2 + yw2);
+	result[1] = vec3(xy2 + zw2, 1 - xx2 - zz2, yz2 - xw2);
+	result[2] = vec3(xz2 - yw2, yz2 + xw2, 1 - xx2 - yy2);
+
+	return result;
+}
 
 } // namespace stx

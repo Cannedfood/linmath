@@ -43,7 +43,7 @@ struct rect {
 	constexpr
 	rect(float x, float y, float w, float h) : position(x, y), size(w, h) {}
 
-	constexpr inline
+	constexpr
 	vec2 max() const noexcept { return position + size; }
 
 	rect clamp(rect const& other) const noexcept {
@@ -51,6 +51,12 @@ struct rect {
 		r.position = other.position.max(position);
 		r.size     = other.max().min(max()) - r.position;
 		return r;
+	}
+
+	constexpr
+	bool contains(vec2 const& v) const noexcept {
+		vec2 diff = v - position;
+		return diff.x > 0 && diff.x < size.x && diff.y > 0 && diff.y < size.y;
 	}
 };
 

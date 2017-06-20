@@ -6,6 +6,9 @@
 
 namespace stx {
 
+class mat4;
+class mat3;
+
 /// A quaternion used for rotation. @ingroup stxmath
 class quat {
 public:
@@ -50,27 +53,25 @@ public:
 
 	constexpr inline quat conjugate() const { return -(*this); }
 
-	constexpr inline
-	vec3 operator*(const vec3& v) const {
-		float n   = x * 2.f;
-        float n2  = y * 2.f;
-        float n3  = z * 2.f;
-        float n4  = x * n;
-        float n5  = y * n2;
-        float n6  = z * n3;
-        float n7  = x * n2;
-        float n8  = x * n3;
-        float n9  = y * n3;
-        float n10 = w * n;
-        float n11 = w * n2;
-        float n12 = w * n3;
+	constexpr inline float length2() const { return w * w + x * x + y * y + z * z; }
+	inline float length() const { return sqrtf(length2()); }
 
-        return vec3 {
-			(1 - (n5 + n6)) * v.x + (n7 - n12) * v.y + (n8 + n11) * v.z,
-			(n7 + n12) * v.x + (1 - (n4 + n6)) * v.y + (n9 - n10) * v.z,
-			(n8 - n11) * v.x + (n9 + n10) * v.y + (1 - (n4 + n5)) * v.z
-		};
+	quat normalize() const {
+		return quat(*this).make_normalized();
 	}
+
+	quat& make_normalized() {
+		float l = length();
+		w /= l;
+		x /= l;
+		y /= l;
+		z /= l;
+		return *this;
+	}
+
+	mat3 to_mat3() const;
+
+	mat4 to_mat4() const;
 
 	static quat AngleAxis(float angle, vec3 axis) {
 		float sinangle = sinf(angle / 2.f);
