@@ -29,20 +29,20 @@ public:
 		x(x), y(y), z(z)
 	{}
 
-	constexpr operator const float*() const { return xyz; }
+	constexpr operator const float*() const noexcept { return xyz; }
 	constexpr operator       float*()       { return xyz; }
 
-	constexpr const float& operator[](size_t idx) const { return xyz[idx]; }
+	constexpr const float& operator[](size_t idx) const noexcept { return xyz[idx]; }
 	constexpr       float& operator[](size_t idx)       { return xyz[idx]; }
 
 
-	constexpr vec3 operator+(const vec3& other) const { return vec3{x + other.x, y + other.y, z + other.z}; }
-	constexpr vec3 operator-(const vec3& other) const { return vec3{x - other.x, y - other.y, z - other.z}; }
-	constexpr vec3 operator*(const vec3& other) const { return vec3{x * other.x, y * other.y, z * other.z}; }
-	constexpr vec3 operator/(const vec3& other) const { return vec3{x / other.x, y / other.y, z / other.z}; }
+	constexpr vec3 operator+(const vec3& other) const noexcept { return vec3{x + other.x, y + other.y, z + other.z}; }
+	constexpr vec3 operator-(const vec3& other) const noexcept { return vec3{x - other.x, y - other.y, z - other.z}; }
+	constexpr vec3 operator*(const vec3& other) const noexcept { return vec3{x * other.x, y * other.y, z * other.z}; }
+	constexpr vec3 operator/(const vec3& other) const noexcept { return vec3{x / other.x, y / other.y, z / other.z}; }
 
-	constexpr vec3 operator*(float f) const { return vec3{x * f, y * f, z * f}; }
-	constexpr vec3 operator/(float f) const { return vec3{x / f, y / f, z / f}; }
+	constexpr vec3 operator*(float f) const noexcept { return vec3{x * f, y * f, z * f}; }
+	constexpr vec3 operator/(float f) const noexcept { return vec3{x / f, y / f, z / f}; }
 
 	constexpr vec3 operator+=(const vec3& other) { return *this = *this + other; }
 	constexpr vec3 operator-=(const vec3& other) { return *this = *this - other; }
@@ -52,16 +52,16 @@ public:
 	constexpr vec3 operator*=(float f) { return *this = *this * f; }
 	constexpr vec3 operator/=(float f) { return *this = *this / f; }
 
-	constexpr vec3 operator-() const { return vec3{-x, -y, -z}; }
+	constexpr vec3 operator-() const noexcept { return vec3{-x, -y, -z}; }
 
-	constexpr bool operator==(const vec3& other) const {
+	constexpr bool operator==(const vec3& other) const noexcept {
 		return x == other.x && y == other.y && y == other.y;
 	}
-	constexpr bool operator!=(const vec3& other) const {
+	constexpr bool operator!=(const vec3& other) const noexcept {
 		return x != other.x || y != other.y || y != other.y;
 	}
 
-	constexpr vec3 cross(const vec3& v) const {
+	constexpr vec3 cross(const vec3& v) const noexcept {
 		return vec3{
 			y * v.z - v.y * z,
 			z * v.x - v.z * x,
@@ -69,30 +69,30 @@ public:
 		};
 	}
 
-	 constexpr float dot(const vec3& v) const { return x * v.x + y * v.y + z * v.z; }
-	 constexpr float length2()          const { return dot(*this); }
-	 float length()                     const { return sqrtf(length2()); }
+	 constexpr float dot(const vec3& v) const noexcept { return x * v.x + y * v.y + z * v.z; }
+	 constexpr float length2()          const noexcept { return dot(*this); }
+	 float length()                     const noexcept { return sqrtf(length2()); }
 
 	 // constexpr TODO: make these two constexpr as soon as length() is
-	 vec3  normalize() const { return *this / length(); }
+	 vec3  normalize() const noexcept { return *this / length(); }
 	 vec3& make_normal()     { *this = normalize(); return *this; }
 
 
-	 constexpr vec3 max(const vec3& v) const {
+	 constexpr vec3 max(const vec3& v) const noexcept {
 		return vec3 {
 			x > v.x ? x : v.x,
 			y > v.y ? y : v.y,
 			z > v.z ? z : v.z
 		};
 	}
-	constexpr vec3 min(const vec3& v) const {
+	constexpr vec3 min(const vec3& v) const noexcept {
 		return vec3{
 			x < v.x ? x : v.x,
 			y < v.y ? y : v.y,
 			z < v.z ? z : v.z
 		};
 	}
-	constexpr vec3 clamp(const vec3& mn, const vec3& mx) const { return min(mx).max(mn); }
+	constexpr vec3 clamp(const vec3& mn, const vec3& mx) const noexcept { return min(mx).max(mn); }
 
 	constexpr static unsigned Dimensions() { return 3; }
 };

@@ -44,10 +44,10 @@ public:
 	{}
 
 	constexpr
-	operator const float*() const { return data; }
+	operator const float*() const noexcept { return data; }
 	operator       float*()       { return data; }
 
-	const vec3& operator[](size_t idx) const { return vectors[idx]; }
+	const vec3& operator[](size_t idx) const noexcept { return vectors[idx]; }
 	      vec3& operator[](size_t idx)       { return vectors[idx]; }
 
 	inline mat3 operator*(const mat3& other) {
@@ -72,13 +72,13 @@ public:
 	}
 
 	inline
-	bool operator==(const mat3& other) const {
+	bool operator==(const mat3& other) const noexcept {
 		return std::memcmp(data, other.data, sizeof(data)) == 0;
 	}
 };
 
 inline
-mat3 quat::to_mat3() const {
+mat3 quat::to_mat3() const noexcept {
 	mat3 result;
 
 	float x2 = 2 * w;

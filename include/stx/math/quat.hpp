@@ -29,34 +29,34 @@ public:
 		w(w), x(x), y(y), z(z)
 	{}
 
-	constexpr inline quat operator+(const quat& other) const { return quat{w + other.w, x + other.x, y + other.y, z + other.z}; }
-	constexpr inline quat operator-(const quat& other) const { return quat{w + other.w, x - other.x, y - other.y, z - other.z}; }
-	constexpr quat operator*(const quat& other) const {
-		return {
+	constexpr inline quat operator+(const quat& other) const noexcept { return quat(w + other.w, x + other.x, y + other.y, z + other.z); }
+	constexpr inline quat operator-(const quat& other) const noexcept { return quat(w + other.w, x - other.x, y - other.y, z - other.z); }
+	constexpr quat operator*(const quat& other) const noexcept {
+		return quat(
 			w * other.w - x * other.x - y * other.y - z * other.z,
 			w * other.x + x * other.w + y * other.z - z * other.y,
 			w * other.y - x * other.z + y * other.w + z * other.x,
 			w * other.z + x * other.y - y * other.x + z * other.w
-		};
+		);
 	}
-	constexpr inline quat operator/(const quat& other) const { return (*this) * other.conjugate(); }
+	constexpr inline quat operator/(const quat& other) const noexcept { return (*this) * other.conjugate(); }
 
-	inline quat operator*(float f) const { return quat{w/f, x*f, y*f, z*f}; }
-	inline quat operator/(float f) const { return quat{w/f, x/f, y/f, z/f}; }
+	inline quat operator*(float f) const noexcept { return quat(w/f, x*f, y*f, z*f); }
+	inline quat operator/(float f) const noexcept { return quat(w/f, x/f, y/f, z/f); }
 
 	constexpr inline quat operator*=(const quat& other) { return *this = *this * other; }
 	constexpr inline quat operator/=(const quat& other) { return *this = *this * other.conjugate(); }
 	constexpr inline quat operator+=(const quat& other) { return *this = *this + other; }
 	constexpr inline quat operator-=(const quat& other) { return *this = *this - other; }
 
-	constexpr inline quat operator-() const { return quat{-w,-x,-y,-z }; }
+	constexpr inline quat operator-() const noexcept { return quat(-w,-x,-y,-z); }
 
-	constexpr inline quat conjugate() const { return -(*this); }
+	constexpr inline quat conjugate() const noexcept { return -(*this); }
 
-	constexpr inline float length2() const { return w * w + x * x + y * y + z * z; }
-	inline float length() const { return sqrtf(length2()); }
+	constexpr inline float length2() const noexcept { return w * w + x * x + y * y + z * z; }
+	inline float length() const noexcept { return sqrtf(length2()); }
 
-	quat normalize() const {
+	quat normalize() const noexcept {
 		return quat(*this).make_normalized();
 	}
 
@@ -69,29 +69,29 @@ public:
 		return *this;
 	}
 
-	mat3 to_mat3() const;
+	mat3 to_mat3() const noexcept;
+	mat4 to_mat4() const noexcept;
 
-	mat4 to_mat4() const;
-
-	static quat AngleAxis(float angle, vec3 axis) {
-		float sinangle = sinf(angle / 2.f);
-		return quat{
-			cosf(angle / 2.f),
+	static quat angle_axis(float angle, vec3 const& axis) {
+		float const sinangle = sinf(angle / 2.f);
+		float const cosangle = cosf(angle / 2.f);
+		return quat(
+			cosangle,
 			axis.x * sinangle,
 			axis.y * sinangle,
 			axis.z * sinangle
-		};
+		);
 	}
 
 	constexpr inline
 	vec3 compress() { return vec3{x, y, z}; }
 
 	inline static
-	quat Decompress(const vec3& v) {
+	quat decompress(const vec3& v) {
 		float w = sqrtf(1 - v.length2());
-		return quat {
+		return quat(
 			w, v.x, v.y, v.z
-		};
+		);
 	}
 };
 

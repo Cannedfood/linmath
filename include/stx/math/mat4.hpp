@@ -24,32 +24,32 @@ public:
 
 	constexpr explicit
 	mat4(const mat3& m3) :
-		mat4 {
-			m3.data[0], m3.data[1], m3.data[2], 0,
-			m3.data[3], m3.data[4], m3.data[5], 0,
-			m3.data[6], m3.data[7], m3.data[8], 0,
+		mat4(
+			m3.data[0], m3.data[3], m3.data[6], 0,
+			m3.data[1], m3.data[4], m3.data[7], 0,
+			m3.data[2], m3.data[5], m3.data[8], 0,
 			         0,          0,          0, 1
-		}
+		)
 	{}
 
 	constexpr
 	mat4(float scale = 1.f) :
-		data {
+		mat4(
 			scale,     0,     0,     0,
 			    0, scale,     0,     0,
 			    0,     0, scale,     0,
-			    0,     0,     0, scale
-		}
+			    0,     0,     0,     1
+		)
 	{}
 
 	constexpr
 	mat4(const vec4& scale) :
-		data {
+		mat4(
 			scale.x,       0,       0,       0,
 				  0, scale.y,       0,       0,
 				  0,       0, scale.z,       0,
 				  0,       0,       0, scale.w
-		}
+		)
 	{}
 
 	constexpr
@@ -64,37 +64,32 @@ public:
 		float ca, float cb, float cc, float cd,
 		float da, float db, float dc, float dd) :
 		data{
-			aa, ab, ac, ad,
-			ba, bb, bc, bd,
-			ca, cb, cc, cd,
-			da, db, dc, dd
+			aa, ba, ca, da,
+			ab, bb, cb, db,
+			ac, bc, cc, dc,
+			ad, bd, cd, dd
 		}
 	{}
 
-	constexpr inline operator const float*() const { return data; }
-	constexpr inline operator       float*()       { return data; }
+	constexpr inline operator const float*() const noexcept { return data; }
+	constexpr inline operator       float*()       noexcept { return data; }
 
-	constexpr inline const vec4& operator[](size_t idx) const { return vectors[idx]; }
-	constexpr inline       vec4& operator[](size_t idx)       { return vectors[idx]; }
+	constexpr inline const vec4& operator[](size_t idx) const noexcept { return vectors[idx]; }
+	constexpr inline       vec4& operator[](size_t idx)       noexcept { return vectors[idx]; }
 
-	mat4 scale(const vec3& scale) const {
-		mat4 copy = *this;
-		for (size_t i = 0; i < 3; i++) {
-			copy[i][i] *= scale[i];
-		}
-		return copy;
+	constexpr
+	mat4 scale(const vec3& scale) const noexcept {
+		return (*this) * scaling(scale);
 	}
 
-	mat4 translate(const vec3& translation) const {
-		mat4 copy = *this;
-		for (size_t i = 0; i < 3; i++) {
-			copy[3][i] *= translation[i];
-		}
-		return copy;
+	constexpr
+	mat4 translate(const vec3& off) const noexcept {
+		return (*this) * translation(off);
 	}
 
-	mat4 transpose() const {
-		mat4 copy;
+	constexpr
+	mat4 transpose() const noexcept {
+		mat4 copy = *this;
 		for (size_t i = 0; i < 4; i++) {
 			for (size_t j = 0; j < 4; j++) {
 				copy[i][j] = (*this)[j][i];
@@ -103,53 +98,77 @@ public:
 		return copy;
 	}
 
-	mat4 rotate(quat const& q) const {
-		return (*this) * q.to_mat3();
+	constexpr
+	mat4 rotate(quat const& q) const noexcept {
+		return (*this) * rotation(q);
 	}
 
 	constexpr
-	mat4 operator*(const mat4& other) const {
+	mat4 operator*(const mat4& other) const noexcept {
 		mat4 result;
-		for (size_t i = 0; i < 4; i++) {
-			for (size_t k = 0; k < 4; k++) {
-				result[i][k] =
-					(*this)[i][0] * other[0][k] +
-					(*this)[i][1] * other[1][k] +
-					(*this)[i][2] * other[2][k] +
-					(*this)[i][3] * other[3][k];
+		for (size_t row = 0; row < 4; row++) {
+			for (size_t clmn = 0; clmn < 4; clmn++) {
+				result[clmn][row] =
+					(*this)[row][0] * other[0][clmn] +
+					(*this)[row][1] * other[1][clmn] +
+					(*this)[row][2] * other[2][clmn] +
+					(*this)[row][3] * other[3][clmn];
 			}
 		}
 		return result;
 	}
 
 	constexpr
-	mat4 operator*(const mat3& other) const {
+	mat4 operator*(const mat3& other) const noexcept {
 		return (*this) * mat4(other);
 	}
 
 	constexpr
-	vec3 operator*(const vec3& v) {
-		return vec3{
+	vec3 operator*(const vec3& v) noexcept {
+		return vec3(
 			v.x * data[ 0] + v.y * data[ 1] + v.z * data[ 2] + data[ 3],
 			v.x * data[ 4] + v.y * data[ 5] + v.z * data[ 6] + data[ 7],
 			v.x * data[ 8] + v.y * data[ 9] + v.z * data[10] + data[11]
-		};
+		);
 	}
 
 	constexpr
-	vec4 operator*(const vec4& v) {
-		return vec4{
+	vec4 operator*(const vec4& v) noexcept {
+		return vec4(
 			v.x * data[ 0] + v.y * data[ 1] + v.z * data[ 2] + v.w * data[ 3],
 			v.x * data[ 4] + v.y * data[ 5] + v.z * data[ 6] + v.w * data[ 7],
 			v.x * data[ 8] + v.y * data[ 9] + v.z * data[10] + v.w * data[11],
 			v.x * data[12] + v.y * data[13] + v.z * data[14] + v.w * data[15]
-		};
+		);
+	}
+
+	constexpr static
+	mat4 rotation(quat const& q) noexcept {
+		return mat4(q.to_mat3());
+	}
+
+	constexpr static
+	mat4 translation(vec3 const& v) noexcept {
+		mat4 result;
+		result[3].x = v.x;
+		result[3].y = v.y;
+		result[3].z = v.z;
+		return result;
+	}
+
+	constexpr static
+	mat4 scaling(vec3 const& v) noexcept {
+		mat4 result;
+		result[0][0] = v.x;
+		result[1][1] = v.y;
+		result[2][2] = v.z;
+		return result;
 	}
 };
 
 inline
-mat4 quat::to_mat4() const {
-	return mat4(to_mat3());
+mat4 quat::to_mat4() const noexcept {
+	return mat4(quat::to_mat3());
 }
 
 } // namespace stx

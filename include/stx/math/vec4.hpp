@@ -28,16 +28,16 @@ public:
 		x(x), y(y), z(z), w(w)
 	{}
 
-	constexpr operator const float*() const { return xyzw; }
+	constexpr operator const float*() const noexcept { return xyzw; }
 	constexpr operator       float*()       { return xyzw; }
 
-	constexpr vec4 operator+(const vec4& other) const { return vec4{x+other.x, y+other.y, z+other.z, w+other.w}; }
-	constexpr vec4 operator-(const vec4& other) const { return vec4{x-other.x, y-other.y, z-other.z, w-other.w}; }
-	constexpr vec4 operator*(const vec4& other) const { return vec4{x*other.x, y*other.y, z*other.z, w*other.w}; }
-	constexpr vec4 operator/(const vec4& other) const { return vec4{x/other.x, y/other.y, z/other.z, w/other.w}; }
+	constexpr vec4 operator+(const vec4& other) const noexcept { return vec4{x+other.x, y+other.y, z+other.z, w+other.w}; }
+	constexpr vec4 operator-(const vec4& other) const noexcept { return vec4{x-other.x, y-other.y, z-other.z, w-other.w}; }
+	constexpr vec4 operator*(const vec4& other) const noexcept { return vec4{x*other.x, y*other.y, z*other.z, w*other.w}; }
+	constexpr vec4 operator/(const vec4& other) const noexcept { return vec4{x/other.x, y/other.y, z/other.z, w/other.w}; }
 
-	constexpr vec4 operator*(float f) const { return vec4{x * f, y * f, z * f, w * f}; }
-	constexpr vec4 operator/(float f) const { return vec4{x / f, y / f, z / f, w / f}; }
+	constexpr vec4 operator*(float f) const noexcept { return vec4{x * f, y * f, z * f, w * f}; }
+	constexpr vec4 operator/(float f) const noexcept { return vec4{x / f, y / f, z / f, w / f}; }
 
 	constexpr vec4 operator+=(const vec4& other) { return *this = *this + other; }
 	constexpr vec4 operator-=(const vec4& other) { return *this = *this - other; }
@@ -47,25 +47,25 @@ public:
 	constexpr vec4 operator*=(float f) { return *this = *this * f; }
 	constexpr vec4 operator/=(float f) { return *this = *this / f; }
 
-	constexpr vec4 operator-() const { return vec4{-x, -y, -z, -w}; }
+	constexpr vec4 operator-() const noexcept { return vec4{-x, -y, -z, -w}; }
 
-	constexpr bool operator==(const vec4& other) const {
+	constexpr bool operator==(const vec4& other) const noexcept {
 		return x == other.x && y == other.y && z == other.z && w == other.w;
 	}
-	constexpr bool operator!=(const vec4& other) const {
+	constexpr bool operator!=(const vec4& other) const noexcept {
 		return x != other.x || y != other.y || z != other.z || w != other.w;
 	}
 
-	constexpr float dot(const vec4& v) const { return x * v.x + y * v.y + z * v.z + w * v.w; }
-	constexpr float length2()          const { return dot(*this); }
-	float length()                     const { return sqrtf(length2()); }
+	constexpr float dot(const vec4& v) const noexcept { return x * v.x + y * v.y + z * v.z + w * v.w; }
+	constexpr float length2()          const noexcept { return dot(*this); }
+	float length()                     const noexcept { return sqrtf(length2()); }
 
 	// TODO: make these two constexpr if as length() is
-	vec4  normalize()   const { return *this / length(); }
+	vec4  normalize()   const noexcept { return *this / length(); }
 	vec4& make_normal() { *this = normalize(); return *this; }
 
 
-	constexpr vec4 max(const vec4& v) const {
+	constexpr vec4 max(const vec4& v) const noexcept {
 		return vec4{
 			x > v.x ? x : v.x,
 			y > v.y ? y : v.y,
@@ -73,7 +73,7 @@ public:
 			w > v.w ? w : v.w
 		};
 	}
-	constexpr vec4 min(const vec4& v) const {
+	constexpr vec4 min(const vec4& v) const noexcept {
 		return vec4{
 			x < v.x ? x : v.x,
 			y < v.y ? y : v.y,
@@ -81,7 +81,9 @@ public:
 			w < v.w ? w : v.w
 		};
 	}
-	constexpr vec4 clamp(const vec4& mn, const vec4& mx) const { return min(mx).max(mn); }
+	constexpr vec4 clamp(const vec4& mn, const vec4& mx) const noexcept { return min(mx).max(mn); }
+
+	constexpr float sum() const noexcept { return x + y + z + w; }
 
 	constexpr static unsigned Dimensions() { return 3; }
 };
