@@ -77,7 +77,7 @@ public:
 	constexpr vec2 ceil()  const noexcept { return vec2(std::ceil(x), std::ceil(y)); }
 	constexpr vec2 floor() const noexcept { return vec2(std::floor(x), std::floor(y)); }
 
-	constexpr static unsigned Dimensions() { return 2; }
+	constexpr static unsigned dimensions() { return 2; }
 };
 
 inline constexpr float dot    (const vec2& a, const vec2& b) { return a.dot(b); }

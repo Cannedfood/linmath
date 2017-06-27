@@ -10,7 +10,7 @@ namespace {
 
 template<typename vecN>
 void test_vecN() {
-	constexpr size_t N = vecN::Dimensions();
+	constexpr size_t N = vecN::dimensions();
 
 	vecN v;
 	for (size_t i = 0; i < N; i++)

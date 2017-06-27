@@ -90,7 +90,7 @@ public:
 	const vec3& as_vec3() const noexcept { return *reinterpret_cast<vec3 const*>(xyzw); }
 	      vec3& as_vec3()       noexcept { return *reinterpret_cast<vec3*>(xyzw); }
 
-	constexpr static unsigned Dimensions() { return 3; }
+	constexpr static unsigned dimensions() { return 3; }
 };
 
 inline constexpr float dot    (const vec4& a, const vec4& b) { return a.dot(b); }
