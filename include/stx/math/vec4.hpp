@@ -4,6 +4,8 @@
 
 namespace stx {
 
+class vec3;
+
 /// A 4 dimensional vector or rgba color. @ingroup stxmath
 class vec4 {
 public:
@@ -84,6 +86,9 @@ public:
 	constexpr vec4 clamp(const vec4& mn, const vec4& mx) const noexcept { return min(mx).max(mn); }
 
 	constexpr float sum() const noexcept { return x + y + z + w; }
+
+	const vec3& as_vec3() const noexcept { return *reinterpret_cast<vec3 const*>(xyzw); }
+	      vec3& as_vec3()       noexcept { return *reinterpret_cast<vec3*>(xyzw); }
 
 	constexpr static unsigned Dimensions() { return 3; }
 };

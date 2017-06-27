@@ -17,11 +17,6 @@ public:
 		vec4  vectors[4];
 	};
 
-	constexpr
-	mat4(std::nullptr_t) :
-		vectors{vec4(), vec4(), vec4(), vec4()}
-	{}
-
 	constexpr explicit
 	mat4(const mat3& m3) :
 		mat4(
@@ -32,7 +27,7 @@ public:
 		)
 	{}
 
-	constexpr
+	constexpr explicit
 	mat4(float scale = 1.f) :
 		mat4(
 			scale,     0,     0,     0,
@@ -42,7 +37,7 @@ public:
 		)
 	{}
 
-	constexpr
+	constexpr explicit
 	mat4(const vec4& scale) :
 		mat4(
 			scale.x,       0,       0,       0,
@@ -71,11 +66,13 @@ public:
 		}
 	{}
 
-	constexpr inline operator const float*() const noexcept { return data; }
-	constexpr inline operator       float*()       noexcept { return data; }
+	constexpr operator const float*() const noexcept { return data; }
+	constexpr operator       float*()       noexcept { return data; }
 
-	constexpr inline const vec4& operator[](size_t idx) const noexcept { return vectors[idx]; }
-	constexpr inline       vec4& operator[](size_t idx)       noexcept { return vectors[idx]; }
+	template<typename Idx>
+	constexpr inline const vec4& operator[](Idx idx) const noexcept { return vectors[idx]; }
+	template<typename Idx>
+	constexpr inline       vec4& operator[](Idx idx)       noexcept { return vectors[idx]; }
 
 	constexpr
 	mat4 scale(const vec3& scale) const noexcept {
@@ -98,7 +95,6 @@ public:
 		return copy;
 	}
 
-	constexpr
 	mat4 rotate(quat const& q) const noexcept {
 		return (*this) * rotation(q);
 	}
@@ -109,10 +105,10 @@ public:
 		for (size_t row = 0; row < 4; row++) {
 			for (size_t clmn = 0; clmn < 4; clmn++) {
 				result[clmn][row] =
-					(*this)[row][0] * other[0][clmn] +
-					(*this)[row][1] * other[1][clmn] +
-					(*this)[row][2] * other[2][clmn] +
-					(*this)[row][3] * other[3][clmn];
+					(*this)[clmn][0] * other[0][row] +
+					(*this)[clmn][1] * other[1][row] +
+					(*this)[clmn][2] * other[2][row] +
+					(*this)[clmn][3] * other[3][row];
 			}
 		}
 		return result;
@@ -124,7 +120,7 @@ public:
 	}
 
 	constexpr
-	vec3 operator*(const vec3& v) noexcept {
+	vec3 operator*(const vec3& v) const noexcept {
 		return vec3(
 			v.x * data[ 0] + v.y * data[ 1] + v.z * data[ 2] + data[ 3],
 			v.x * data[ 4] + v.y * data[ 5] + v.z * data[ 6] + data[ 7],
@@ -133,7 +129,7 @@ public:
 	}
 
 	constexpr
-	vec4 operator*(const vec4& v) noexcept {
+	vec4 operator*(const vec4& v) const noexcept {
 		return vec4(
 			v.x * data[ 0] + v.y * data[ 1] + v.z * data[ 2] + v.w * data[ 3],
 			v.x * data[ 4] + v.y * data[ 5] + v.z * data[ 6] + v.w * data[ 7],
@@ -142,7 +138,7 @@ public:
 		);
 	}
 
-	constexpr static
+	static
 	mat4 rotation(quat const& q) noexcept {
 		return mat4(q.to_mat3());
 	}
@@ -163,6 +159,21 @@ public:
 		result[1][1] = v.y;
 		result[2][2] = v.z;
 		return result;
+	}
+
+	constexpr static
+	mat4 zero() {
+		return mat4(
+			0, 0, 0, 0,
+			0, 0, 0, 0,
+			0, 0, 0, 0,
+			0, 0, 0, 0
+		);
+	}
+
+	constexpr static
+	mat4 identity() {
+		return mat4(1.f);
 	}
 };
 

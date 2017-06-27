@@ -29,11 +29,11 @@ public:
 		x(x), y(y), z(z)
 	{}
 
-	constexpr operator const float*() const noexcept { return xyz; }
-	constexpr operator       float*()       { return xyz; }
+	constexpr explicit operator const float*() const noexcept { return xyz; }
+	constexpr explicit operator       float*()       noexcept { return xyz; }
 
 	constexpr const float& operator[](size_t idx) const noexcept { return xyz[idx]; }
-	constexpr       float& operator[](size_t idx)       { return xyz[idx]; }
+	constexpr       float& operator[](size_t idx)       noexcept { return xyz[idx]; }
 
 
 	constexpr vec3 operator+(const vec3& other) const noexcept { return vec3{x + other.x, y + other.y, z + other.z}; }
@@ -94,7 +94,11 @@ public:
 	}
 	constexpr vec3 clamp(const vec3& mn, const vec3& mx) const noexcept { return min(mx).max(mn); }
 
-	constexpr static unsigned Dimensions() { return 3; }
+	constexpr static vec3 xaxis() { return vec3(1, 0, 0); }
+	constexpr static vec3 yaxis() { return vec3(0, 1, 0); }
+	constexpr static vec3 zaxis() { return vec3(0, 0, 1); }
+
+	constexpr static unsigned dimensions() { return 3; }
 };
 
 inline constexpr float dot    (const vec3& a, const vec3& b) { return a.dot(b); }

@@ -56,6 +56,11 @@ public:
 	constexpr inline float length2() const noexcept { return w * w + x * x + y * y + z * z; }
 	inline float length() const noexcept { return sqrtf(length2()); }
 
+	constexpr inline
+	bool operator==(quat const& other) const noexcept { return other.w == w && other.x == x && other.y == y && other.z == z; }
+	constexpr inline
+	bool operator!=(quat const& other) const noexcept { return other.w != w || other.x != x || other.y != y || other.z != z; }
+
 	quat normalize() const noexcept {
 		return quat(*this).make_normalized();
 	}
@@ -81,6 +86,29 @@ public:
 			axis.y * sinangle,
 			axis.z * sinangle
 		);
+	}
+
+	static quat roll_pitch_yaw(vec3 const& v) {
+		// Adapted from https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
+		quat q;
+
+		float const t0 = cosf(v.z * 0.5);
+		float const t1 = sinf(v.z * 0.5);
+		float const t2 = cosf(v.x * 0.5);
+		float const t3 = sinf(v.x * 0.5);
+		float const t4 = cosf(v.y * 0.5);
+		float const t5 = sinf(v.y * 0.5);
+
+		q.w = t0 * t2 * t4 + t1 * t3 * t5;
+		q.x = t0 * t3 * t4 - t1 * t2 * t5;
+		q.y = t0 * t2 * t5 + t1 * t3 * t4;
+		q.z = t1 * t2 * t4 - t0 * t3 * t5;
+
+		return q;
+	}
+
+	static quat head_rotation(vec3 const& v) {
+		return quat::angle_axis(v.z, vec3::zaxis()) * quat::angle_axis(v.x, vec3::xaxis()) * quat::angle_axis(v.y, vec3::yaxis());
 	}
 
 	constexpr inline

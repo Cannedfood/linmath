@@ -25,8 +25,8 @@ public:
 	mat3(float scale = 1.f) :
 		data {
 			scale,     0,     0,
-			    0, scale,     0,
-			    0,     0, scale
+				0, scale,     0,
+				0,     0, scale
 		}
 	{}
 
@@ -40,24 +40,29 @@ public:
 		float aa, float ab, float ac,
 		float ba, float bb, float bc,
 		float ca, float cb, float cc) :
-		data{aa, ab, ac, ba, bb, bc, ca, cb, cc}
+		data{
+			aa, ba, ca,
+			ab, bb, cb,
+			ac, bc, cc
+		}
 	{}
 
-	constexpr
-	operator const float*() const noexcept { return data; }
-	operator       float*()       { return data; }
+	constexpr operator const float*() const noexcept { return data; }
+	constexpr operator       float*()                { return data; }
 
-	const vec3& operator[](size_t idx) const noexcept { return vectors[idx]; }
-	      vec3& operator[](size_t idx)       { return vectors[idx]; }
+	template<typename Idx>
+	constexpr const vec3& operator[](Idx idx) const noexcept { return vectors[idx]; }
+	template<typename Idx>
+	constexpr       vec3& operator[](Idx idx)       noexcept { return vectors[idx]; }
 
-	inline mat3 operator*(const mat3& other) {
+	constexpr inline mat3 operator*(const mat3& other) const {
 		mat3 result;
-		for (size_t i = 0; i < 3; i++) {
-			for (size_t k = 0; k < 3; k++) {
-				result[i][k] =
-					(*this)[i][0] * other[0][k] +
-					(*this)[i][1] * other[1][k] +
-					(*this)[i][2] * other[2][k];
+		for (size_t row = 0; row < 3; row++) {
+			for (size_t clmn = 0; clmn < 3; clmn++) {
+				result[clmn][row] =
+					(*this)[clmn][0] * other[0][row] +
+					(*this)[clmn][1] * other[1][row] +
+					(*this)[clmn][2] * other[2][row];
 			}
 		}
 		return result;
@@ -81,27 +86,27 @@ inline
 mat3 quat::to_mat3() const noexcept {
 	mat3 result;
 
-	float x2 = 2 * w;
-	float y2 = 2 * x;
-	float z2 = 2 * y;
-	float w2 = 2 * z;
+	float xx      = x * x;
+	float xy      = x * y;
+	float xz      = x * z;
+	float xw      = x * w;
 
-	float xx2 = x * x2;
-	float yy2 = y * y2;
-	float zz2 = z * z2;
+	float yy      = y * y;
+	float yz      = y * z;
+	float yw      = y * w;
 
-	float xy2 = x * y2;
-	float xz2 = x * z2;
-	float xw2 = x * w2;
+	float zz      = z * z;
+	float zw      = z * w;
 
-	float yz2 = y * z2;
-	float yw2 = y * w2;
-
-	float zw2 = z * w2;
-
-	result[0] = vec3(1 - yy2 - zz2, xy2 - zw2, xz2 + yw2);
-	result[1] = vec3(xy2 + zw2, 1 - xx2 - zz2, yz2 - xw2);
-	result[2] = vec3(xz2 - yw2, yz2 + xw2, 1 - xx2 - yy2);
+	result[0][0] = 1 - 2 * (yy + zz);
+	result[1][0] =     2 * (xy - zw);
+	result[2][0] =     2 * (xz + yw);
+	result[0][1] =     2 * (xy + zw);
+	result[1][1] = 1 - 2 * (xx + zz);
+	result[2][1] =     2 * (yz - xw);
+	result[0][2] =     2 * (xz - yw);
+	result[1][2] =     2 * (yz + xw);
+	result[2][2] = 1 - 2 * (xx + yy);
 
 	return result;
 }

@@ -44,4 +44,13 @@ mat3 scale(const vec3& v) {
 	};
 }
 
+mat4 translate(const vec3& v) {
+	return mat4 {
+		1, 0, 0, v.x,
+		0, 1, 0, v.y,
+		0, 0, 1, v.z,
+		0, 0, 0, 1
+	};
+}
+
 } // namespace stx
