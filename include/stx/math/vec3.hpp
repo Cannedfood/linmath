@@ -5,6 +5,8 @@
 
 namespace stx {
 
+class vec2;
+
 /// A 3 dimensional vector or rgb color. @ingroup stxmath
 class vec3 {
 public:
@@ -99,6 +101,9 @@ public:
 	constexpr static vec3 zaxis() { return vec3(0, 0, 1); }
 
 	constexpr static unsigned dimensions() { return 3; }
+
+	vec2&       as_vec2()       { return *((vec2*) xyz); }
+	vec2 const& as_vec2() const { return *((vec2 const*) xyz); }
 };
 
 inline constexpr float dot    (const vec3& a, const vec3& b) { return a.dot(b); }
