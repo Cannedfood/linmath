@@ -56,6 +56,15 @@ public:
 	constexpr float length2() const noexcept { return dot(*this); }
 	float length() const noexcept { return sqrtf(length2()); }
 
+	constexpr vec2 mix(vec2 const& other, float k) const noexcept {
+		return (*this) * k + other * (1 - k);
+	}
+
+	vec2 mix(vec2 const& other, float k, float step, float unit = 1) const noexcept {
+		float adjusted_k = powf(k, step / unit);
+		return mix(other, adjusted_k);
+	}
+
 	vec2  normalized()      const noexcept { return *this / length(); }
 	vec2& make_normalized()       { return *this /= length(); }
 
@@ -79,6 +88,14 @@ public:
 
 	constexpr static unsigned dimensions() { return 2; }
 };
+
+inline constexpr vec2 mix(const vec2& a, const vec2& b, float k) {
+	return a.mix(b, k);
+}
+
+inline vec2 mix(const vec2& a, const vec2& b, float k, float step, float unit = 1) {
+	return a.mix(b, k, step, unit);
+}
 
 inline constexpr float dot    (const vec2& a, const vec2& b) { return a.dot(b); }
 inline constexpr float length2(const vec2& v) { return v.length2(); }

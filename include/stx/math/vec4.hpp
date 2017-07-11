@@ -62,6 +62,15 @@ public:
 	constexpr float length2()          const noexcept { return dot(*this); }
 	float length()                     const noexcept { return sqrtf(length2()); }
 
+	constexpr vec4 mix(vec4 const& other, float k) const noexcept {
+		return (*this) * k + other * (1 - k);
+	}
+
+	vec4 mix(vec4 const& other, float k, float step, float unit = 1) const noexcept {
+		float adjusted_k = powf(k, step / unit);
+		return mix(other, adjusted_k);
+	}
+
 	// TODO: make these two constexpr if as length() is
 	vec4  normalize()   const noexcept { return *this / length(); }
 	vec4& make_normal() { *this = normalize(); return *this; }
@@ -96,6 +105,14 @@ public:
 inline constexpr float dot    (const vec4& a, const vec4& b) { return a.dot(b); }
 inline constexpr float length2(const vec4& v)   { return v.length2(); }
 inline float           length (const vec4& v)   { return v.length(); }
+
+inline constexpr vec4 mix(const vec4& a, const vec4& b, float k) {
+	return a.mix(b, k);
+}
+
+inline vec4 mix(const vec4& a, const vec4& b, float k, float step, float unit = 1) {
+	return a.mix(b, k, step, unit);
+}
 
 static constexpr
 vec4 rgba(unsigned char r, unsigned char g, unsigned char b, double a = 1.0) {

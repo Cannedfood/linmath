@@ -19,18 +19,21 @@ public:
 		float wxyz[3];
 	};
 
-	constexpr inline
+	constexpr
 	quat() :
 		quat(0, 1, 0, 0)
 	{}
 
-	constexpr inline
+	constexpr
 	quat(float w, float x, float y, float z) :
 		w(w), x(x), y(y), z(z)
 	{}
 
-	constexpr inline quat operator+(const quat& other) const noexcept { return quat(w + other.w, x + other.x, y + other.y, z + other.z); }
-	constexpr inline quat operator-(const quat& other) const noexcept { return quat(w + other.w, x - other.x, y - other.y, z - other.z); }
+	explicit
+	quat(mat3 const& m);
+
+	constexpr quat operator+(const quat& other) const noexcept { return quat(w + other.w, x + other.x, y + other.y, z + other.z); }
+	constexpr quat operator-(const quat& other) const noexcept { return quat(w - other.w, x - other.x, y - other.y, z - other.z); }
 	constexpr quat operator*(const quat& other) const noexcept {
 		return quat(
 			w * other.w - x * other.x - y * other.y - z * other.z,
@@ -39,45 +42,79 @@ public:
 			w * other.z + x * other.y - y * other.x + z * other.w
 		);
 	}
-	constexpr inline quat operator/(const quat& other) const noexcept { return (*this) * other.conjugate(); }
+	constexpr quat operator/(const quat& other) const noexcept { return (*this) * other.conjugate(); }
 
-	inline quat operator*(float f) const noexcept { return quat(w/f, x*f, y*f, z*f); }
-	inline quat operator/(float f) const noexcept { return quat(w/f, x/f, y/f, z/f); }
+	constexpr quat operator*(float f) const noexcept { return quat(w * f, x * f, y * f, z * f); }
+	constexpr quat operator/(float f) const noexcept { return (*this) * (1.f / f); }
 
-	constexpr inline quat operator*=(const quat& other) { return *this = *this * other; }
-	constexpr inline quat operator/=(const quat& other) { return *this = *this * other.conjugate(); }
-	constexpr inline quat operator+=(const quat& other) { return *this = *this + other; }
-	constexpr inline quat operator-=(const quat& other) { return *this = *this - other; }
+	constexpr quat operator*=(const quat& other) { return *this = *this * other; }
+	constexpr quat operator/=(const quat& other) { return *this = *this * other.conjugate(); }
+	constexpr quat operator+=(const quat& other) { return *this = *this + other; }
+	constexpr quat operator-=(const quat& other) { return *this = *this - other; }
 
-	constexpr inline quat operator-() const noexcept { return quat(-w,-x,-y,-z); }
+	constexpr quat operator-() const noexcept { return quat(-w,-x,-y,-z); }
 
-	constexpr inline quat conjugate() const noexcept { return -(*this); }
-
-	constexpr inline float length2() const noexcept { return w * w + x * x + y * y + z * z; }
-	inline float length() const noexcept { return sqrtf(length2()); }
-
-	constexpr inline
+	constexpr
 	bool operator==(quat const& other) const noexcept { return other.w == w && other.x == x && other.y == y && other.z == z; }
-	constexpr inline
+	constexpr
 	bool operator!=(quat const& other) const noexcept { return other.w != w || other.x != x || other.y != y || other.z != z; }
 
-	quat normalize() const noexcept {
-		return quat(*this).make_normalized();
+	constexpr float length2() const noexcept { return w * w + x * x + y * y + z * z; }
+	float length() const noexcept { return sqrtf(length2()); }
+
+	constexpr quat conjugate() const noexcept { return -(*this); }
+
+	quat lerp(quat const& other, float k) noexcept {
+		return quat(w + other.w, x + other.x, y + other.y, z + other.z).normalize();
 	}
 
-	quat& make_normalized() {
-		float l = length();
-		w /= l;
-		x /= l;
-		y /= l;
-		z /= l;
-		return *this;
+	quat lerp(quat const& other, float k, float step, float unit = 1) noexcept {
+		return lerp(other, 1 - powf(1 - k, step / unit));
 	}
+
+	quat slerp(quat const& other, float k) noexcept {
+		float dot = w * other.w + x * other.x + y * other.y + z * other.z;
+
+		if(fabs(dot) > 0.9995f) {
+			return lerp(other, k);
+		}
+
+		quat v1;
+		if(dot < 0) {
+			dot = -dot;
+			v1  = -other;
+		}
+		else {
+			v1 = other;
+		}
+
+		float theta   = acosf(dot) * k;
+
+		quat v2 = (v1 - (*this) * dot).normalize();
+
+		return (*this) * cosf(theta) + v2 * sinf(theta);
+	}
+
+	quat slerp(quat const& other, float k, float step, float unit = 1) noexcept {
+		return slerp(other, 1 - powf(1 - k, step / unit));
+	}
+
+	quat normalize() const noexcept {
+		float l = length();
+		return quat(w / l, x / l, y / l, z / l);
+	}
+
+	constexpr quat& make_conjugate()  noexcept { return (*this) = conjugate(); }
+	quat& make_normalized() noexcept { return (*this) = normalize(); }
+	quat& make_lerp(quat const& other, float k) noexcept { return (*this) = lerp(other, k); }
+	quat& make_lerp(quat const& other, float k, float step, float unit = 1) noexcept { return (*this) = lerp(other, k, step, unit); }
+	quat& make_slerp(quat const& other, float k, float step, float unit = 1) noexcept { return (*this) = slerp(other, k, step, unit); }
+	quat& make_slerp(quat const& other, float k) noexcept { return (*this) = slerp(other, k); }
 
 	mat3 to_mat3() const noexcept;
 	mat4 to_mat4() const noexcept;
 
-	static quat angle_axis(float angle, vec3 const& axis) {
+	static quat angle_axis(float angle, vec3 const& axis) noexcept {
 		float const sinangle = sinf(angle / 2.f);
 		float const cosangle = cosf(angle / 2.f);
 		return quat(
@@ -88,7 +125,7 @@ public:
 		);
 	}
 
-	static quat roll_pitch_yaw(vec3 const& v) {
+	static quat roll_pitch_yaw(vec3 const& v) noexcept {
 		// Adapted from https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
 		quat q;
 
@@ -107,15 +144,15 @@ public:
 		return q;
 	}
 
-	static quat head_rotation(vec3 const& v) {
+	static quat head_rotation(vec3 const& v) noexcept {
 		return quat::angle_axis(v.z, vec3::zaxis()) * quat::angle_axis(v.x, vec3::xaxis()) * quat::angle_axis(v.y, vec3::yaxis());
 	}
 
-	constexpr inline
-	vec3 compress() { return vec3{x, y, z}; }
+	constexpr
+	vec3 compress() noexcept { return vec3{x, y, z}; }
 
-	inline static
-	quat decompress(const vec3& v) {
+	static
+	quat decompress(const vec3& v) noexcept {
 		float w = sqrtf(1 - v.length2());
 		return quat(
 			w, v.x, v.y, v.z

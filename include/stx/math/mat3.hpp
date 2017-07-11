@@ -68,7 +68,7 @@ public:
 		return result;
 	}
 
-	inline vec3 operator*(const vec3& v) {
+	inline vec3 operator*(vec3 const& v) const {
 		return vec3{
 			v.x * data[0] + v.y * data[1] + v.z * data[2],
 			v.x * data[3] + v.y * data[4] + v.z * data[5],
@@ -81,6 +81,17 @@ public:
 		return std::memcmp(data, other.data, sizeof(data)) == 0;
 	}
 };
+
+inline
+quat::quat(mat3 const& m) :
+	quat()
+{
+	this->w = sqrtf(1 + m[0][0] + m[1][1] + m[2][2]);
+	float w4 = w * 4;
+	this->x = (m[2][1] - m[1][2]) / w4;
+	this->y = (m[0][2] - m[2][0]) / w4;
+	this->z = (m[1][0] - m[0][1]) / w4;
+}
 
 inline
 mat3 quat::to_mat3() const noexcept {

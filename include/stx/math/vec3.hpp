@@ -46,13 +46,13 @@ public:
 	constexpr vec3 operator*(float f) const noexcept { return vec3{x * f, y * f, z * f}; }
 	constexpr vec3 operator/(float f) const noexcept { return vec3{x / f, y / f, z / f}; }
 
-	constexpr vec3 operator+=(const vec3& other) { return *this = *this + other; }
-	constexpr vec3 operator-=(const vec3& other) { return *this = *this - other; }
-	constexpr vec3 operator*=(const vec3& other) { return *this = *this * other; }
-	constexpr vec3 operator/=(const vec3& other) { return *this = *this / other; }
+	constexpr vec3 operator+=(const vec3& other) noexcept { return (*this) = (*this) + other; }
+	constexpr vec3 operator-=(const vec3& other) noexcept { return (*this) = (*this) - other; }
+	constexpr vec3 operator*=(const vec3& other) noexcept { return (*this) = (*this) * other; }
+	constexpr vec3 operator/=(const vec3& other) noexcept { return (*this) = (*this) / other; }
 
-	constexpr vec3 operator*=(float f) { return *this = *this * f; }
-	constexpr vec3 operator/=(float f) { return *this = *this / f; }
+	constexpr vec3 operator*=(float f) noexcept { return (*this) = (*this) * f; }
+	constexpr vec3 operator/=(float f) noexcept { return (*this) = (*this) / f; }
 
 	constexpr vec3 operator-() const noexcept { return vec3{-x, -y, -z}; }
 
@@ -71,14 +71,24 @@ public:
 		};
 	}
 
-	 constexpr float dot(const vec3& v) const noexcept { return x * v.x + y * v.y + z * v.z; }
-	 constexpr float length2()          const noexcept { return dot(*this); }
-	 float length()                     const noexcept { return sqrtf(length2()); }
+	constexpr float dot(const vec3& v) const noexcept { return x * v.x + y * v.y + z * v.z; }
+	constexpr float length2()          const noexcept { return dot(*this); }
+	float length()                     const noexcept { return sqrtf(length2()); }
 
-	 // constexpr TODO: make these two constexpr as soon as length() is
-	 vec3  normalize() const noexcept { return *this / length(); }
-	 vec3& make_normal()     { *this = normalize(); return *this; }
+	constexpr vec3 mix(vec3 const& other, float k) const noexcept {
+		return (*this) * (1 - k) + other * k;
+	}
 
+	vec3 mix(vec3 const& other, float k, float step, float unit = 1) const noexcept {
+		return mix(other, 1 - powf(1 - k, step / unit));
+	}
+
+	 // constexpr TODO: make constexpr as soon as length() is
+	 vec3  normalize() const noexcept { return (*this) / length(); }
+
+	 vec3& make_mix(vec3 const& other, float k) noexcept { return (*this) = mix(other, k); }
+	 vec3& make_mix(vec3 const& other, float k, float step, float unit = 1) noexcept { return (*this) = mix(other, k, step, unit); }
+	 vec3& make_normal() noexcept { return (*this) = normalize(); }
 
 	 constexpr vec3 max(const vec3& v) const noexcept {
 		return vec3 {
@@ -96,23 +106,38 @@ public:
 	}
 	constexpr vec3 clamp(const vec3& mn, const vec3& mx) const noexcept { return min(mx).max(mn); }
 
-	constexpr static vec3 xaxis() { return vec3(1, 0, 0); }
-	constexpr static vec3 yaxis() { return vec3(0, 1, 0); }
-	constexpr static vec3 zaxis() { return vec3(0, 0, 1); }
+	constexpr static vec3 xaxis() noexcept { return vec3(1, 0, 0); }
+	constexpr static vec3 yaxis() noexcept { return vec3(0, 1, 0); }
+	constexpr static vec3 zaxis() noexcept { return vec3(0, 0, 1); }
 
-	constexpr static unsigned dimensions() { return 3; }
+	constexpr static vec3 forward() noexcept { return -zaxis(); }
+	constexpr static vec3 back()    noexcept { return  zaxis(); }
+	constexpr static vec3 right()   noexcept { return  xaxis(); }
+	constexpr static vec3 left()    noexcept { return -xaxis(); }
+	constexpr static vec3 up()      noexcept { return  yaxis(); }
+	constexpr static vec3 down()    noexcept { return -yaxis(); }
 
-	vec2&       as_vec2()       { return *((vec2*) xyz); }
-	vec2 const& as_vec2() const { return *((vec2 const*) xyz); }
+	constexpr static unsigned dimensions() noexcept { return 3; }
+
+	vec2&       as_vec2()       noexcept { return *((vec2*) xyz); }
+	vec2 const& as_vec2() const noexcept { return *((vec2 const*) xyz); }
 };
 
-inline constexpr float dot    (const vec3& a, const vec3& b) { return a.dot(b); }
-inline constexpr vec3  cross  (const vec3& a, const vec3& b) { return a.cross(b); }
-inline constexpr float length2(const vec3& v)   { return v.length2(); }
-inline float           length (const vec3& v)   { return v.length(); }
+inline constexpr float dot    (const vec3& a, const vec3& b) noexcept { return a.dot(b); }
+inline constexpr vec3  cross  (const vec3& a, const vec3& b) noexcept { return a.cross(b); }
+inline constexpr float length2(const vec3& v)                noexcept { return v.length2(); }
+inline float           length (const vec3& v)                noexcept { return v.length(); }
+
+inline constexpr vec3 mix(const vec3& a, const vec3& b, float k) noexcept {
+	return a.mix(b, k);
+}
+
+inline vec3 mix(const vec3& a, const vec3& b, float k, float step, float unit = 1) noexcept {
+	return a.mix(b, k, step, unit);
+}
 
 static constexpr
-vec3 rgb(unsigned char r, unsigned char g, unsigned char b) {
+vec3 rgb(unsigned char r, unsigned char g, unsigned char b) noexcept {
 	return vec3{ r / 255.f, g / 255.f, b / 255.f };
 }
 
