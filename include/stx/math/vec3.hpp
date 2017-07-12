@@ -121,6 +121,9 @@ public:
 
 	vec2&       as_vec2()       noexcept { return *((vec2*) xyz); }
 	vec2 const& as_vec2() const noexcept { return *((vec2 const*) xyz); }
+
+	constexpr bool valid() const noexcept { return x == x && y == y && z == z; }
+	constexpr bool is_null() const noexcept { return x == 0 && y == 0 && z == 0; }
 };
 
 inline constexpr float dot    (const vec3& a, const vec3& b) noexcept { return a.dot(b); }

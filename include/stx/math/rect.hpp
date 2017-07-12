@@ -27,6 +27,9 @@ struct quad {
 
 	constexpr
 	float height() const noexcept { return max.y - min.y; }
+
+	constexpr
+	bool empty() const noexcept { return min.x == max.x && min.y == max.y; }
 };
 
 /// A axis aligned rectangle defined by minumum and size @ingroup stxmath
@@ -58,6 +61,9 @@ struct rect {
 		vec2 diff = v - position;
 		return diff.x > 0 && diff.x < size.x && diff.y > 0 && diff.y < size.y;
 	}
+
+	constexpr
+	bool empty() const noexcept { return size.x == 0 && size.y == 0; }
 };
 
 } // namespace stx
