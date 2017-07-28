@@ -44,4 +44,8 @@ mat4 orthographic(vec2 const& size, float zNear, float zFar) {
 	return result;
 }
 
+mat4 ui_space(vec2 const& size = vec2(1)) {
+	return mat4::scaling(vec3(1 / size.x, -1 / size.y, 1)).translate(vec3(-1, 1, 0));
+}
+
 } // namespace stx
