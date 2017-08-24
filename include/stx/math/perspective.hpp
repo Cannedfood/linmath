@@ -5,6 +5,7 @@
 
 namespace stx {
 
+static
 mat4 perspective(float fov, float width, float height, float zNear, float zFar) {
 #ifdef xassert
 	xassert(zNear < zFar);
@@ -31,6 +32,7 @@ mat4 perspective(float fov, float width, float height, float zNear, float zFar) 
 	return result;
 }
 
+constexpr static
 mat4 orthographic(vec2 const& size, float zNear, float zFar) {
 #ifdef xassert
 	xassert(zNear < zFar);
@@ -44,8 +46,19 @@ mat4 orthographic(vec2 const& size, float zNear, float zFar) {
 	return result;
 }
 
+constexpr static
 mat4 ui_space(vec2 const& size = vec2(1)) {
-	return mat4::scaling(vec3(1 / size.x, -1 / size.y, 1)).translate(vec3(-1, 1, 0));
+#ifdef xassert
+	xassert(size.x >= 1);
+	xassert(size.y >= 1);
+#endif // defined(xassert)
+
+	mat4 transform;
+	transform[0][0] =  2 / size.x;
+	transform[1][1] = -2 / size.y;
+	transform[3][0] = -1;
+	transform[3][1] =  1;
+	return transform;
 }
 
 } // namespace stx
