@@ -11,8 +11,9 @@ mat4 perspective(float fov, float width, float height, float zNear, float zFar) 
 	xassert(zNear < zFar);
 	xassert(zNear == zNear);
 	xassert(zFar == zFar);
-	xassert(fov > 0);
 	xassert(fov == fov);
+	xassert(fov > 0);
+	xassertmsg(fov < M_PI, "FOV is in radians and has to be smaller than 180 degrees (smaller than pi)");
 #endif
 
 	float const h = cosf(0.5f * fov) / sin(0.5f * fov);
