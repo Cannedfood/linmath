@@ -21,7 +21,7 @@ public:
 
 	constexpr
 	quat() :
-		quat(0, 1, 0, 0)
+		quat(1, 0, 0, 0)
 	{}
 
 	constexpr
