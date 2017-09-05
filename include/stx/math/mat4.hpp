@@ -152,6 +152,11 @@ public:
 		return result;
 	}
 
+	constexpr
+	vec3 translation() const noexcept {
+		return vec3(vectors[3][0], vectors[3][1], vectors[3][2]);
+	}
+
 	constexpr static
 	mat4 scaling(vec3 const& v) noexcept {
 		mat4 result;
