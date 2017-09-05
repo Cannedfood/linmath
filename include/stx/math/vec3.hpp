@@ -84,13 +84,39 @@ public:
 	}
 
 	 // constexpr TODO: make constexpr as soon as length() is
-	 vec3  normalize() const noexcept { return (*this) / length(); }
+	vec3  normalize() const noexcept { return (*this) / length(); }
 
-	 vec3& make_mix(vec3 const& other, float k) noexcept { return (*this) = mix(other, k); }
-	 vec3& make_mix(vec3 const& other, float k, float step, float unit = 1) noexcept { return (*this) = mix(other, k, step, unit); }
-	 vec3& make_normal() noexcept { return (*this) = normalize(); }
+	static
+	vec3 look_at(vec3 const& origin, vec3 const& at) noexcept {
+		if(origin == at) return vec3();
 
-	 constexpr vec3 max(const vec3& v) const noexcept {
+		vec3 fwd      = (at - origin).normalize();
+
+		vec3  fwd_xz   = fwd * vec3(1, 0, 1);
+		float len_xz   = fwd_xz.length();
+		if(len_xz == 0) {
+			if(fwd.y < 0) return vec3(0.5f * M_PI, 0, 0);
+			else return vec3(-0.5f * M_PI, 0, 0);
+		}
+
+		fwd_xz /= len_xz;
+		float fwd_y    = fwd.y;
+
+		float slope_y = fwd_y / len_xz;
+
+		float cosine_xz = -1 * fwd_xz.z;
+		float angle_y = acos(cosine_xz);
+		if(fwd_xz.x < 0)
+			angle_y *= -1;
+
+		return vec3(-atan(slope_y), angle_y, 0);
+	}
+
+	vec3& make_mix(vec3 const& other, float k) noexcept { return (*this) = mix(other, k); }
+	vec3& make_mix(vec3 const& other, float k, float step, float unit = 1) noexcept { return (*this) = mix(other, k, step, unit); }
+	vec3& make_normal() noexcept { return (*this) = normalize(); }
+
+	constexpr vec3 max(const vec3& v) const noexcept {
 		return vec3 {
 			x > v.x ? x : v.x,
 			y > v.y ? y : v.y,

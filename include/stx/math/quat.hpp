@@ -135,6 +135,13 @@ public:
 		);
 	}
 
+	// TODO: implement with up
+	static quat look_at(vec3 const& origin, vec3 const& at) noexcept {
+		vec3 v = vec3::look_at(origin, at);
+
+		return quat::angle_axis(v.x, vec3::right()) * quat::angle_axis(v.y, vec3::up());
+	}
+
 	static quat roll_pitch_yaw(vec3 const& v) noexcept {
 		// Adapted from https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
 		quat q;
