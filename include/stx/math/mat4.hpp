@@ -175,6 +175,17 @@ public:
 	mat4 identity() {
 		return mat4(1.f);
 	}
+
+	mat3 to_mat3() {
+		mat3 result;
+
+		for(size_t i = 0; i < 3; i++) {
+			for(size_t j = 0; j < 3; j++)
+				result[i][j] = (*this)[i][j];
+		}
+		
+		return result;
+	}
 };
 
 inline
