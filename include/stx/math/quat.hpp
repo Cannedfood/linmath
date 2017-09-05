@@ -64,29 +64,39 @@ public:
 
 	constexpr quat conjugate() const noexcept { return -(*this); }
 
-	quat lerp(quat const& other, float k) noexcept {
-		return quat(w + other.w, x + other.x, y + other.y, z + other.z).normalize();
+	constexpr float dot(quat const& q) const noexcept {
+		return q.w * w + q.x * x + q.y * y + q.z * z;
 	}
 
-	quat lerp(quat const& other, float k, float step, float unit = 1) noexcept {
+	quat lerp(quat const& other, float k) const noexcept {
+		if(other.dot(*this) < 0)
+			return (*this + (other.conjugate() - *this) * k).normalize();
+		else
+			return (*this + (other - *this) * k).normalize();
+	}
+
+	quat lerp(quat const& other, float k, float step, float unit = 1) const noexcept {
 		return lerp(other, 1 - powf(1 - k, step / unit));
 	}
 
-	quat slerp(quat const& other, float k) noexcept {
+	quat slerp(quat const& other, float k) const noexcept {
 		float dot = w * other.w + x * other.x + y * other.y + z * other.z;
 
 		if(fabs(dot) > 0.9995f) {
 			return lerp(other, k);
 		}
 
-		quat v1;
+		quat v1 = other;
+
 		if(dot < 0) {
+			v1  = other.conjugate();
 			dot = -dot;
-			v1  = -other;
 		}
 		else {
 			v1 = other;
 		}
+
+		if(dot > 1) dot = 1;
 
 		float theta   = acosf(dot) * k;
 
@@ -95,7 +105,7 @@ public:
 		return (*this) * cosf(theta) + v2 * sinf(theta);
 	}
 
-	quat slerp(quat const& other, float k, float step, float unit = 1) noexcept {
+	quat slerp(quat const& other, float k, float step, float unit = 1) const noexcept {
 		return slerp(other, 1 - powf(1 - k, step / unit));
 	}
 
