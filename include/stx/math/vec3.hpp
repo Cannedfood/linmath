@@ -76,7 +76,7 @@ public:
 	float length()                     const noexcept { return sqrtf(length2()); }
 
 	constexpr vec3 mix(vec3 const& other, float k) const noexcept {
-		return (*this) * (1 - k) + other * k;
+		return (*this) + (other - *this) * k;
 	}
 
 	vec3 mix(vec3 const& other, float k, float step, float unit = 1) const noexcept {
@@ -125,6 +125,11 @@ public:
 	constexpr bool valid() const noexcept { return x == x && y == y && z == z; }
 	constexpr bool is_null() const noexcept { return x == 0 && y == 0 && z == 0; }
 };
+
+constexpr inline
+vec3 operator*(float f, vec3 const& v) noexcept { return v * f; }
+constexpr inline
+vec3 operator/(float f, vec3 const& v) noexcept { return vec3(f / v.x, f / v.y, f / v.z); }
 
 inline constexpr float dot    (const vec3& a, const vec3& b) noexcept { return a.dot(b); }
 inline constexpr vec3  cross  (const vec3& a, const vec3& b) noexcept { return a.cross(b); }

@@ -102,6 +102,11 @@ public:
 	constexpr static unsigned dimensions() { return 3; }
 };
 
+constexpr inline
+vec4 operator*(float f, vec4 const& v) noexcept { return v * f; }
+constexpr inline
+vec4 operator/(float f, vec4 const& v) noexcept { return vec4(f / v.x, f / v.y, f / v.z, f / v.w); }
+
 inline constexpr float dot    (const vec4& a, const vec4& b) { return a.dot(b); }
 inline constexpr float length2(const vec4& v)   { return v.length2(); }
 inline float           length (const vec4& v)   { return v.length(); }

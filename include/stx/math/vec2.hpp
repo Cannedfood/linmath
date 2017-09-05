@@ -89,6 +89,11 @@ public:
 	constexpr static unsigned dimensions() { return 2; }
 };
 
+constexpr inline
+vec2 operator*(float f, vec2 const& v) noexcept { return v * f; }
+constexpr inline
+vec2 operator/(float f, vec2 const& v) noexcept { return vec2(f / v.x, f / v.y); }
+
 inline constexpr vec2 mix(const vec2& a, const vec2& b, float k) {
 	return a.mix(b, k);
 }
