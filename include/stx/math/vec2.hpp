@@ -86,6 +86,11 @@ public:
 	constexpr vec2 ceil()  const noexcept { return vec2(std::ceil(x), std::ceil(y)); }
 	constexpr vec2 floor() const noexcept { return vec2(std::floor(x), std::floor(y)); }
 
+	constexpr bool is_null() const noexcept { return x == 0 && y == 0; }
+	constexpr void replace_null(vec2 const& v) noexcept { if(is_null()) *this = v; }
+	constexpr bool is_nan()  const noexcept { return x != x || y != y; }
+	constexpr void replace_nan(vec2 const& v) noexcept { if(is_nan()) *this = v; }
+
 	constexpr static unsigned dimensions() { return 2; }
 };
 
