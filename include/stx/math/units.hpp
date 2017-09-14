@@ -4,12 +4,12 @@
  * It does NOT use any compile time type checks
  * Usage examples:
  *    1 Nautical mile in the base unit (meters)
- *          float f = 1_nmi;
+ *          float f = 1.0_nmi;
  *      or
- *          float f = 1_nautical_mile;
+ *          float f = 1.0_nautical_mile;
  *    Converting between units:
  *          float cm, inch = 15;
- *          cm = inch * (1_inch / 1_cm);
+ *          cm = inch * (1.0_inch / 1.0_cm);
  * !!!! This conversion does not work for Temperature (Mostly because 0° is not the same over all units)
  */
 
@@ -103,9 +103,9 @@ unit_t operator "" _meters_per_second(long double d) noexcept { return static_ca
 constexpr inline
 unit_t operator "" _mps(long double d) noexcept { return static_cast<unit_t>(d); }
 constexpr inline
-unit_t operator "" _kilometers_per_hour(long double d) noexcept { return static_cast<unit_t>(d * (1_km / 1_h)); }
+unit_t operator "" _kilometers_per_hour(long double d) noexcept { return static_cast<unit_t>(d * (1.0_km / 1.0_h)); }
 constexpr inline
-unit_t operator "" _kmh(long double d) noexcept { return static_cast<unit_t>(d * (1_km / 1_h)); }
+unit_t operator "" _kmh(long double d) noexcept { return static_cast<unit_t>(d * (1.0_km / 1.0_h)); }
 
 // -- Temperature -------------------------------------------------------
 constexpr inline
@@ -152,9 +152,9 @@ unit_t operator "" _mi(long double d) noexcept { return static_cast<unit_t>(d * 
 
 // -- Speed -------------------------------------------------------
 constexpr inline
-unit_t operator "" _miles_per_hour(long double d) noexcept { return static_cast<unit_t>(d * (1_mile / 1_h)); }
+unit_t operator "" _miles_per_hour(long double d) noexcept { return static_cast<unit_t>(d * (1.0_mile / 1.0_h)); }
 constexpr inline
-unit_t operator "" _mph(long double d) noexcept { return static_cast<unit_t>(d * (1_mile / 1_h)); }
+unit_t operator "" _mph(long double d) noexcept { return static_cast<unit_t>(d * (1.0_mile / 1.0_h)); }
 
 // -- Temperature -------------------------------------------------------
 constexpr inline
@@ -173,9 +173,9 @@ constexpr inline // Nautical mile
 unit_t operator "" _nmi(long double d) noexcept { return static_cast<unit_t>(d * 1.609344_km); }
 // -- Speeds -------------------------------------------------------
 constexpr inline // Nautical mile
-unit_t operator "" _nautical_mile_per_hour(long double d) noexcept { return static_cast<unit_t>(d * 1_nmi / 1_hour); }
+unit_t operator "" _nautical_mile_per_hour(long double d) noexcept { return static_cast<unit_t>(d * 1.0_nmi / 1.0_hours); }
 constexpr inline // Nautical mile
-unit_t operator "" _nmiph(long double d) noexcept { return static_cast<unit_t>(d * 1_nmi / 1_hour); }
+unit_t operator "" _nmiph(long double d) noexcept { return static_cast<unit_t>(d * 1.0_nmi / 1.0_hours); }
 
 // =============================================================
 // == Constants =============================================
@@ -190,7 +190,7 @@ constexpr static unit_t G_jupiter = static_cast<unit_t>(24.79L);
 
 constexpr static unit_t G = static_cast<unit_t>(6.67408e-11L);
 
-constexpr static unit_t c = 299 792 458_mps;
+constexpr static unit_t c = 299792458.0_mps;
 
 } // namespace constants
 
