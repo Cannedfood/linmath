@@ -135,6 +135,12 @@ public:
 		);
 	}
 
+	quat extract_axis(vec3 const& axis) const {
+		vec3 ra(x, y, z);
+		vec3 p = ra * ra.dot(axis);
+		return quat(w, p.x, p.y, p.z).normalize();
+	}
+
 	// TODO: implement with up
 	static quat look_at(vec3 const& origin, vec3 const& at) noexcept {
 		vec3 v = vec3::look_at(origin, at);
