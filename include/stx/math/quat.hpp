@@ -136,9 +136,11 @@ public:
 	}
 
 	quat extract_axis(vec3 const& axis) const {
-		vec3 ra(x, y, z);
-		vec3 p = ra * ra.dot(axis);
-		return quat(w, p.x, p.y, p.z).normalize();
+		vec3 ra( x, y, z ); // rotation axis
+		vec3 p = axis * ::stx::dot(ra, axis.normalize()); // return projection v1 on to v2  (parallel component)
+		quat twist(w, p.x, p.y, p.z);
+		twist.make_normalized();
+		return twist;
 	}
 
 	// TODO: implement with up
