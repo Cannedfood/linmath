@@ -18,6 +18,25 @@ namespace stx {
 using unit_t    = long double;
 
 // =============================================================
+// == Constants =============================================
+// =============================================================
+
+namespace constants {
+
+constexpr static unit_t G_earth   = static_cast<unit_t>(9.80665L);
+constexpr static unit_t G_moon    = static_cast<unit_t>(1.622L);
+constexpr static unit_t G_mars    = static_cast<unit_t>(3.711L);
+constexpr static unit_t G_jupiter = static_cast<unit_t>(24.79L);
+
+constexpr static unit_t G = static_cast<unit_t>(6.67408e-11L);
+
+constexpr static unit_t c = 299792458.0;
+
+constexpr static unit_t pi = 3.14159265359L;
+
+} // namespace constants
+
+// =============================================================
 // == SI units =============================================
 // =============================================================
 
@@ -178,20 +197,9 @@ constexpr inline // Nautical mile
 unit_t operator "" _nmiph(long double d) noexcept { return static_cast<unit_t>(d * 1.0_nmi / 1.0_hours); }
 
 // =============================================================
-// == Constants =============================================
+// == Angles =============================================
 // =============================================================
 
-namespace constants {
-
-constexpr static unit_t G_earth   = static_cast<unit_t>(9.80665L);
-constexpr static unit_t G_moon    = static_cast<unit_t>(1.622L);
-constexpr static unit_t G_mars    = static_cast<unit_t>(3.711L);
-constexpr static unit_t G_jupiter = static_cast<unit_t>(24.79L);
-
-constexpr static unit_t G = static_cast<unit_t>(6.67408e-11L);
-
-constexpr static unit_t c = 299792458.0_mps;
-
-} // namespace constants
+unit_t operator "" _deg(long double d) noexcept { return static_cast<unit_t>(d * M_PI / 180); }
 
 } // namespace stx

@@ -9,14 +9,14 @@ namespace stx {
 class mat4;
 class mat3;
 
-/// A quaternion used for rotation. @ingroup stxmath
+/// A quaternion used for rotation.
+/// @ingroup stxmath
 class quat {
 public:
 	union {
-		struct {
-			float w, x, y, z;
-		};
-		float wxyz[3];
+		struct { float    w, x, y, z; };
+		struct { float real, i, j, k; };
+		float wxyz[4];
 	};
 
 	constexpr
@@ -48,7 +48,7 @@ public:
 	constexpr quat operator/(float f) const noexcept { return (*this) * (1.f / f); }
 
 	constexpr quat operator*=(const quat& other) { return *this = *this * other; }
-	constexpr quat operator/=(const quat& other) { return *this = *this * other.conjugate(); }
+	constexpr quat operator/=(const quat& other) { return *this = *this / other; }
 	constexpr quat operator+=(const quat& other) { return *this = *this + other; }
 	constexpr quat operator-=(const quat& other) { return *this = *this - other; }
 
@@ -62,7 +62,7 @@ public:
 	constexpr float length2() const noexcept { return w * w + x * x + y * y + z * z; }
 	float length() const noexcept { return sqrtf(length2()); }
 
-	constexpr quat conjugate() const noexcept { return -(*this); }
+	constexpr quat conjugate() const noexcept { return quat(w, -x, -y, -z); }
 
 	constexpr float dot(quat const& q) const noexcept {
 		return q.w * w + q.x * x + q.y * y + q.z * z;
@@ -70,7 +70,7 @@ public:
 
 	quat lerp(quat const& other, float k) const noexcept {
 		if(other.dot(*this) < 0)
-			return (*this + (other.conjugate() - *this) * k).normalize();
+			return (*this + ((-other) - *this) * k).normalize();
 		else
 			return (*this + (other - *this) * k).normalize();
 	}
@@ -89,7 +89,7 @@ public:
 		quat v1 = other;
 
 		if(dot < 0) {
-			v1  = other.conjugate();
+			v1  = -other;
 			dot = -dot;
 		}
 		else {
@@ -145,9 +145,13 @@ public:
 
 	// TODO: implement with up
 	static quat look_at(vec3 const& origin, vec3 const& at) noexcept {
-		vec3 v = vec3::look_at(origin, at);
+		return quat::look_along(at - origin);
+	}
 
-		return quat::angle_axis(v.x, vec3::right()) * quat::angle_axis(v.y, vec3::up());
+	static quat look_along(vec3 const& along) noexcept {
+		vec3 v = vec3::look_along(along);
+
+		return quat::angle_axis(v.y, vec3::yaxis()) * quat::angle_axis(v.x, vec3::xaxis());
 	}
 
 	static quat roll_pitch_yaw(vec3 const& v) noexcept {
@@ -170,7 +174,7 @@ public:
 	}
 
 	static quat head_rotation(vec3 const& v) noexcept {
-		return quat::angle_axis(v.z, vec3::zaxis()) * quat::angle_axis(v.x, vec3::xaxis()) * quat::angle_axis(v.y, vec3::yaxis());
+		return quat::angle_axis(v.z, vec3::zaxis()) * quat::angle_axis(v.y, vec3::yaxis()) * quat::angle_axis(v.x, vec3::xaxis());
 	}
 
 	constexpr

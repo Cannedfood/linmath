@@ -86,7 +86,7 @@ public:
 
 	constexpr
 	mat4 transpose() const noexcept {
-		mat4 copy = *this;
+		mat4 copy;
 		for (size_t i = 0; i < 4; i++) {
 			for (size_t j = 0; j < 4; j++) {
 				copy[i][j] = (*this)[j][i];
@@ -101,17 +101,12 @@ public:
 
 	constexpr
 	mat4 operator*(const mat4& other) const noexcept {
-		mat4 result;
-		for (size_t row = 0; row < 4; row++) {
-			for (size_t clmn = 0; clmn < 4; clmn++) {
-				result[clmn][row] =
-					(*this)[clmn][0] * other[0][row] +
-					(*this)[clmn][1] * other[1][row] +
-					(*this)[clmn][2] * other[2][row] +
-					(*this)[clmn][3] * other[3][row];
-			}
-		}
-		return result;
+		return mat4(
+			*this * other[0],
+			*this * other[1],
+			*this * other[2],
+			*this * other[3]
+		);
 	}
 
 	constexpr
@@ -122,19 +117,19 @@ public:
 	constexpr
 	vec3 operator*(const vec3& v) const noexcept {
 		return vec3(
-			v.x * data[ 0] + v.y * data[ 1] + v.z * data[ 2] + data[ 3],
-			v.x * data[ 4] + v.y * data[ 5] + v.z * data[ 6] + data[ 7],
-			v.x * data[ 8] + v.y * data[ 9] + v.z * data[10] + data[11]
+			v.x * vectors[0][0] + v.y * vectors[1][0] + v.z * vectors[2][0] + vectors[3][0],
+			v.x * vectors[0][1] + v.y * vectors[1][1] + v.z * vectors[2][1] + vectors[3][1],
+			v.x * vectors[0][2] + v.y * vectors[1][2] + v.z * vectors[2][2] + vectors[3][2]
 		);
 	}
 
 	constexpr
 	vec4 operator*(const vec4& v) const noexcept {
 		return vec4(
-			v.x * data[ 0] + v.y * data[ 1] + v.z * data[ 2] + v.w * data[ 3],
-			v.x * data[ 4] + v.y * data[ 5] + v.z * data[ 6] + v.w * data[ 7],
-			v.x * data[ 8] + v.y * data[ 9] + v.z * data[10] + v.w * data[11],
-			v.x * data[12] + v.y * data[13] + v.z * data[14] + v.w * data[15]
+			v.x * vectors[0][0] + v.y * vectors[1][0] + v.z * vectors[2][0] + v.w * vectors[3][0],
+			v.x * vectors[0][1] + v.y * vectors[1][1] + v.z * vectors[2][1] + v.w * vectors[3][1],
+			v.x * vectors[0][2] + v.y * vectors[1][2] + v.z * vectors[2][2] + v.w * vectors[3][2],
+			v.x * vectors[0][3] + v.y * vectors[1][3] + v.z * vectors[2][3] + v.w * vectors[3][3]
 		);
 	}
 
@@ -185,10 +180,11 @@ public:
 		mat3 result;
 
 		for(size_t i = 0; i < 3; i++) {
-			for(size_t j = 0; j < 3; j++)
+			for(size_t j = 0; j < 3; j++) {
 				result[i][j] = (*this)[i][j];
+			}
 		}
-		
+
 		return result;
 	}
 };

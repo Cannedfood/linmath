@@ -8,7 +8,7 @@
 
 namespace stx {
 
-/// A 3x3 matrix. @ingroup stxmath
+/// A 3x3 matrix. All accessors are column-major. @ingroup stxmath
 class mat3 {
 public:
 	union {
@@ -25,17 +25,17 @@ public:
 	mat3(float scale = 1.f) :
 		data {
 			scale,     0,     0,
-				0, scale,     0,
-				0,     0, scale
+			    0, scale,     0,
+			    0,     0, scale
 		}
 	{}
 
-	constexpr
+	constexpr /// Column constructor
 	mat3(const vec3& a, const vec3& b, const vec3& c) :
 		vectors{ a, b, c }
 	{}
 
-	constexpr
+	constexpr // Row major constructor (ACCESS IS COLUMN MAJOR)
 	mat3(
 		float aa, float ab, float ac,
 		float ba, float bb, float bc,
@@ -47,6 +47,24 @@ public:
 		}
 	{}
 
+	mat3 transpose() const noexcept {
+		return mat3(
+			data[0], data[3], data[6],
+			data[1], data[4], data[7],
+			data[2], data[5], data[8]
+		);
+	}
+
+	float determinant() const {
+		return
+			vectors[0][0] * vectors[1][1] * vectors[2][2] +
+			vectors[0][1] * vectors[1][2] * vectors[2][0] +
+			vectors[0][2] * vectors[1][0] * vectors[2][1] -
+			vectors[0][2] * vectors[1][1] * vectors[2][0] -
+			vectors[0][1] * vectors[1][0] * vectors[2][2] -
+			vectors[0][0] * vectors[1][2] * vectors[2][1];
+	}
+
 	constexpr operator const float*() const noexcept { return data; }
 	constexpr operator       float*()                { return data; }
 
@@ -55,30 +73,28 @@ public:
 	template<typename Idx>
 	constexpr       vec3& operator[](Idx idx)       noexcept { return vectors[idx]; }
 
-	constexpr inline mat3 operator*(const mat3& other) const {
-		mat3 result;
-		for (size_t row = 0; row < 3; row++) {
-			for (size_t clmn = 0; clmn < 3; clmn++) {
-				result[clmn][row] =
-					(*this)[clmn][0] * other[0][row] +
-					(*this)[clmn][1] * other[1][row] +
-					(*this)[clmn][2] * other[2][row];
-			}
-		}
-		return result;
+	constexpr mat3 operator*(mat3 const& other) const {
+		return mat3(
+			*this * other[0],
+			*this * other[1],
+			*this * other[2]
+		);
 	}
 
-	inline vec3 operator*(vec3 const& v) const {
-		return vec3{
-			v.x * data[0] + v.y * data[1] + v.z * data[2],
-			v.x * data[3] + v.y * data[4] + v.z * data[5],
-			v.x * data[6] + v.y * data[7] + v.z * data[8],
-		};
+	constexpr vec3 operator*(vec3 const& v) const {
+		return vec3(
+			v.x * vectors[0][0] + v.y * vectors[1][0] + v.z * vectors[2][0],
+			v.x * vectors[0][1] + v.y * vectors[1][1] + v.z * vectors[2][1],
+			v.x * vectors[0][2] + v.y * vectors[1][2] + v.z * vectors[2][2]
+		);
 	}
 
 	inline
 	bool operator==(const mat3& other) const noexcept {
-		return std::memcmp(data, other.data, sizeof(data)) == 0;
+		for(size_t i = 0; i < 9; i++) {
+			if(fabs(data[i] - other.data[i]) > 1e-6f) return false;
+		}
+		return true;
 	}
 };
 
@@ -97,29 +113,23 @@ inline
 mat3 quat::to_mat3() const noexcept {
 	mat3 result;
 
-	float xx      = x * x;
-	float xy      = x * y;
-	float xz      = x * z;
-	float xw      = x * w;
+	float const xx      = x * x;
+	float const xy      = x * y;
+	float const xz      = x * z;
+	float const xw      = x * w;
 
-	float yy      = y * y;
-	float yz      = y * z;
-	float yw      = y * w;
+	float const yy      = y * y;
+	float const yz      = y * z;
+	float const yw      = y * w;
 
-	float zz      = z * z;
-	float zw      = z * w;
+	float const zz      = z * z;
+	float const zw      = z * w;
 
-	result[0][0] = 1 - 2 * (yy + zz);
-	result[1][0] =     2 * (xy - zw);
-	result[2][0] =     2 * (xz + yw);
-	result[0][1] =     2 * (xy + zw);
-	result[1][1] = 1 - 2 * (xx + zz);
-	result[2][1] =     2 * (yz - xw);
-	result[0][2] =     2 * (xz - yw);
-	result[1][2] =     2 * (yz + xw);
-	result[2][2] = 1 - 2 * (xx + yy);
-
-	return result;
+	return mat3(
+		1 - 2 * (yy + zz),     2 * (xy - zw), 2 * (xz + yw),
+		    2 * (xy + zw), 1 - 2 * (xx + zz), 2 * (yz - xw),
+		    2 * (xz - yw),     2 * (yz + xw), 1 - 2 * (xx + yy)
+	);
 }
 
 } // namespace stx

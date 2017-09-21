@@ -6,29 +6,31 @@
 namespace stx {
 
 static
-mat4 perspective(float fov, float width, float height, float zNear, float zFar) {
+mat4 perspective(float fovy, float width, float height, float zNear, float zFar) {
 #ifdef xassert
 	xassert(zNear < zFar);
 	xassert(zNear == zNear);
 	xassert(zFar == zFar);
-	xassert(fov == fov);
-	xassert(fov > 0);
-	xassertmsg(fov < M_PI, "FOV is in radians and has to be smaller than 180 degrees (smaller than pi)");
+	xassert(fovy == fovy);
+	xassert(fovy > 0);
+	xassertmsg(fovy < M_PI, "FOV is in radians and has to be smaller than 180 degrees (smaller than pi)");
 #endif
 
-	float const h = cosf(0.5f * fov) / sin(0.5f * fov);
-	float const w = h * height / width;
+	float const aspect      = width / height;
+	float const tanHalfFovy = tan(fovy / 2.f);
 
 	mat4 result = mat4::zero();
-	result[0][0] = w;
-	result[1][1] = h;
-	result[2][3] = -1;
+	result[0][0] = 1.f / (aspect * tanHalfFovy);
+	result[1][1] = 1.f / tanHalfFovy;
+	result[2][3] = -1.f;
 
-	result[2][2] = -(zFar + zNear) / (zFar - zNear);
-	result[3][2] = -(2 * zFar * zNear) / (zFar - zNear);
+	// Depth zero to one
+	result[2][2] = zFar / (zNear - zFar);
+	result[3][2] = -(zFar * zNear) / (zFar - zNear);
 
-	// mProjection[2][2] = zFar / (zNear - zFar);
-	// mProjection[3][2] = -(zFar * zNear) / (zFar - zNear);
+	// Depth negative one to one
+	// result[2][2] = - (zFar + zNear) / (zFar - zNear);
+	// result[3][2] = - (2.f * zFar * zNear) / (zFar - zNear);
 
 	return result;
 }
@@ -42,7 +44,20 @@ mat4 orthographic(vec2 const& size, float zNear, float zFar) {
 	xassert(size.x == size.x && size.y == size.y);
 #endif // defined(xassert)
 
-	mat4 result = mat4().scale(vec3(1 / size.x, 1 / size.y, 2 / (zFar - zNear))).translate(vec3(0, 0, -zNear));
+	mat4 result = mat4::identity();
+
+	result[0][0] = 2.f / -size.x;
+	result[1][1] = 2.f / -size.y;
+	result[3][0] = 0;
+	result[3][1] = 0;
+
+	// Depth zero to one
+	// result[2][2] = -1.f / (zFar - zNear);
+	// result[3][2] = -zNear / (zFar - zNear);
+
+	// Depth negative one to one
+	// result[2][2] = -2.f / (zFar - zNear);
+	// result[3][2] = -(zFar + zNear) / (zFar - zNear);
 
 	return result;
 }

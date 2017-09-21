@@ -4,6 +4,8 @@
 #include <xmath/vec3>
 #include <xmath/vec4>
 
+#include <xlogging>
+
 using namespace stx;
 
 namespace {
@@ -59,10 +61,22 @@ void test_vec4() {
 	test_vecN<vec4>();
 }
 
+void test_vec3_lookAt() {
+	test(vec3::look_along(vec3()) == vec3());
+	test(vec3::look_along(vec3::forward()) == vec3());
+	test(vec3::look_along(vec3::up()) == vec3(M_PI * .5f, 0, 0));
+	test(vec3::look_along(vec3::down()) == vec3(-M_PI * .5f, 0, 0));
+	// test(vec3::look_along(vec3::right()) == vec3(0, M_PI * .5f, 0));
+
+	auto fwd = vec3::look_along(vec3::forward());
+	info("Look along forward: %% %% %%", fwd.x, fwd.y, fwd.z);
+}
+
 } // namespace
 
 void test_vec() {
 	test_vec2();
 	test_vec3();
+	test_vec3_lookAt();
 	test_vec4();
 }
