@@ -104,6 +104,16 @@ public:
 		}
 		return true;
 	}
+
+	constexpr static
+	vec3 solveWithCramersRule(vec3 const& a, vec3 const& b, vec3 const& c, vec3 const& d) {
+		float inverse_d0 = 1 / mat3(a, b, c).determinant();
+		return vec3(
+			mat3(d, b, c).determinant() * inverse_d0,
+			mat3(a, d, c).determinant() * inverse_d0,
+			mat3(a, b, d).determinant() * inverse_d0
+		);
+	}
 };
 
 inline
