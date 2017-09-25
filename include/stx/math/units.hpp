@@ -197,6 +197,35 @@ constexpr inline // Nautical mile
 unit_t operator "" _nmiph(long double d) noexcept { return static_cast<unit_t>(d * 1.0_nmi / 1.0_hours); }
 
 // =============================================================
+// == Memory units =============================================
+// =============================================================
+
+using byte_unit_t = size_t;
+
+constexpr inline
+byte_unit_t operator "" _byte(unsigned long long n) { return n; }
+
+// Higher units (1000 base)
+constexpr inline
+byte_unit_t operator "" _kilobyte(unsigned long long n) { return n * 1000_byte; }
+constexpr inline
+byte_unit_t operator "" _megabyte(unsigned long long n) { return n * 1000_kilobyte; }
+constexpr inline
+byte_unit_t operator "" _gigabyte(unsigned long long n) { return n * 1000_megabyte; }
+constexpr inline
+byte_unit_t operator "" _terabyte(unsigned long long n) { return n * 1000_gigabyte; }
+
+// Higher units (1024 base)
+constexpr inline
+byte_unit_t operator "" _kibibyte(unsigned long long n) { return n * 1024_byte; }
+constexpr inline
+byte_unit_t operator "" _mebibyte(unsigned long long n) { return n * 1024_kibibyte; }
+constexpr inline
+byte_unit_t operator "" _gibibyte(unsigned long long n) { return n * 1024_mebibyte; }
+constexpr inline
+byte_unit_t operator "" _tebibyte(unsigned long long n) { return n * 1024_gibibyte; }
+
+// =============================================================
 // == Angles =============================================
 // =============================================================
 
