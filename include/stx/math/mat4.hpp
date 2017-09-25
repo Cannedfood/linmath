@@ -152,6 +152,15 @@ public:
 		return vec3(vectors[3][0], vectors[3][1], vectors[3][2]);
 	}
 
+	static
+	mat4 transform(quat const& rotation, vec3 const& translation, vec3 const& scale = vec3(1)) {
+		mat4 result = mat4(mat3(scale) * rotation.to_mat3());
+		result[3].x = translation.x;
+		result[3].y = translation.y;
+		result[3].z = translation.z;
+		return result;
+	}
+
 	constexpr static
 	mat4 scaling(vec3 const& v) noexcept {
 		mat4 result;
