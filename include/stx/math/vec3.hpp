@@ -71,6 +71,24 @@ public:
 		};
 	}
 
+	constexpr unsigned longest_axis() const {
+		if(x > y) {
+			if(x > z) return 0;
+			else      return 2;
+		}
+		else if(y > z) return 1;
+		else           return 2;
+	}
+
+	constexpr unsigned shortest_axis() const {
+		if(x < y) {
+			if(x < z) return 0;
+			else      return 2;
+		}
+		else if(y < z) return 1;
+		else           return 2;
+	}
+
 	constexpr float dot(const vec3& v) const noexcept { return x * v.x + y * v.y + z * v.z; }
 	constexpr float length2()          const noexcept { return dot(*this); }
 	float length()                     const noexcept { return sqrtf(length2()); }
