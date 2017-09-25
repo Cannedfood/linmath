@@ -23,11 +23,19 @@ public:
 
 	constexpr
 	mat3(float scale = 1.f) :
-		data {
+		mat3(
 			scale,     0,     0,
 			    0, scale,     0,
 			    0,     0, scale
-		}
+		)
+	{}
+
+	mat3(vec3 const& scale) :
+		mat3(
+			scale.x,       0,       0,
+			      0, scale.y,       0,
+			      0,       0, scale.z
+		)
 	{}
 
 	constexpr /// Column constructor
