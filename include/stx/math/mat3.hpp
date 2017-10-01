@@ -63,6 +63,7 @@ public:
 		);
 	}
 
+	constexpr
 	float determinant() const {
 		return
 			vectors[0][0] * vectors[1][1] * vectors[2][2] +
