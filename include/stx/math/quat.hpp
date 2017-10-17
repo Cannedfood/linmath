@@ -47,6 +47,11 @@ public:
 	constexpr quat operator*(float f) const noexcept { return quat(w * f, x * f, y * f, z * f); }
 	constexpr quat operator/(float f) const noexcept { return (*this) * (1.f / f); }
 
+	constexpr vec3 operator*(stx::vec3 const& v) const noexcept {
+		quat tmp = *this * quat(0, v.x, v.y, v.z) * conjugate();
+		return vec3(tmp.x, tmp.y, tmp.z);
+	}
+
 	constexpr quat operator*=(const quat& other) { return *this = *this * other; }
 	constexpr quat operator/=(const quat& other) { return *this = *this / other; }
 	constexpr quat operator+=(const quat& other) { return *this = *this + other; }

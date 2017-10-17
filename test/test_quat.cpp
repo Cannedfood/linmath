@@ -47,12 +47,12 @@ void test_look_at_look_along() {
 		to5 = vec3( 1, -2, -3).normalize(),
 		to6 = vec3( 1, -2,  3).normalize();
 
-	test((quat::look_along(to1).to_mat3() * vec3::forward() - to1).length2() < 0.02f);
-	test((quat::look_along(to2).to_mat3() * vec3::forward() - to2).length2() < 0.02f);
-	test((quat::look_along(to3).to_mat3() * vec3::forward() - to3).length2() < 0.02f);
-	test((quat::look_along(to4).to_mat3() * vec3::forward() - to4).length2() < 0.02f);
-	test((quat::look_along(to5).to_mat3() * vec3::forward() - to5).length2() < 0.02f);
-	test((quat::look_along(to6).to_mat3() * vec3::forward() - to6).length2() < 0.02f);
+	test((quat::look_along(to1) * vec3::forward() - to1).length2() < 0.02f);
+	test((quat::look_along(to2) * vec3::forward() - to2).length2() < 0.02f);
+	test((quat::look_along(to3) * vec3::forward() - to3).length2() < 0.02f);
+	test((quat::look_along(to4) * vec3::forward() - to4).length2() < 0.02f);
+	test((quat::look_along(to5) * vec3::forward() - to5).length2() < 0.02f);
+	test((quat::look_along(to6) * vec3::forward() - to6).length2() < 0.02f);
 
 	stx::vec3 edgecase1 = vec3(0, 0, 0);
 	stx::vec3 edgecase2 = vec3::up();
@@ -60,7 +60,7 @@ void test_look_at_look_along() {
 	test(quat::look_along(edgecase1) == quat());
 	test(quat::look_along(edgecase2) == quat::angle_axis(90.0_deg, vec3::xaxis()));
 
-	stx::vec3 got = quat::look_along(to2).to_mat3() * vec3::forward();
+	stx::vec3 got = quat::look_along(to2) * vec3::forward();
 	info(
 		"have: %% %% %% should: %% %% %%; error: %%",
 		got.x, got.y, got.z,
